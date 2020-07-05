@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import math
 from copy import deepcopy
-from game_env import *
+from game_env_zd import *
 from sympy import Matrix
 from scipy.linalg import null_space
 
