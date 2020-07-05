@@ -133,7 +133,8 @@ def run_task_rd(p_init):
         p1 = p_init[2]
         q1 = p_init[3]
         print(p_1, p_2)
-        qvec = [p_1, p_2, p_2, p_2, p_1, p_2, p_2, p_2]
+        # qvec = [p_1, p_2, p_2, p_2, p_1, p_2, p_2, p_2]
+        qvec = [0.7, 0.9, 0.3, 0.5, 0.5, 0.7, 0.1, 0.3]
         f_p = np.array([3, 1, 4, 2, 7, 5, 8, 6])
         # f_p = np.array([3, 1, 4, 2, 7, 5, 8, 6])
         f_p = f_p.reshape(f_p.size, 1).transpose()
