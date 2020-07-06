@@ -11,10 +11,10 @@ from multiprocessing import Pool
 
 
 def valid_s(s_value):
-    if s_value < 0.01:
-        s_new = 0.01
-    elif s_value > 0.99:
-        s_new = 0.99
+    if s_value < 0.0:
+        s_new = 0.0
+    elif s_value > 1.0:
+        s_new = 1.0
     else:
         s_new = s_value
     return s_new
@@ -46,6 +46,7 @@ class Agent:
         if new_stra:
             for state in self.states:
                 self.strategy[state] = new_stra[state]
+        print(new_stra)
 
     def choose_action(self, s):
         # print(self.id, self.strategy)
@@ -65,8 +66,8 @@ class Agent:
 
 
 def run_game_fala(agent_0_init_strategy, agent_1_init_strategy, s_0):
-    agent_0 = Agent(alpha=0.0000001, agent_id=0)
-    agent_1 = Agent(alpha=0.0000001, agent_id=1)
+    agent_0 = Agent(alpha=0.00001, agent_id=0)
+    agent_1 = Agent(alpha=0.00001, agent_id=1)
     agent_0.initial_strategy()
     agent_1.initial_strategy()
     agent_0.set_strategy(agent_0_init_strategy)
@@ -87,19 +88,47 @@ def run_game_fala(agent_0_init_strategy, agent_1_init_strategy, s_0):
         agent_0.record_strategy()
         agent_1.record_strategy()
         if visited[cur_s] == 0 or visited[1 - cur_s] == 0:
-            visited[cur_s] = 1
-            a_0 = agent_0.choose_action(cur_s)
-            a_1 = agent_1.choose_action(cur_s)
-            action_t_0[cur_s] = a_0
-            action_t_1[cur_s] = a_1
-            r_0, r_1 = games[cur_s](a_0, a_1)
-            r_sum_0[cur_s] = r_sum_0[cur_s] + r_0
-            r_sum_1[cur_s] = r_sum_1[cur_s] + r_1
-            time_step[cur_s] += 1
-            cur_s = next_state(cur_s, a_0, a_1)
+            if visited[cur_s] == 0:
+                # print("1st")
+                visited[cur_s] = 1
+                a_0 = agent_0.choose_action(cur_s)
+                a_1 = agent_1.choose_action(cur_s)
+                action_t_0[cur_s] = a_0
+                action_t_1[cur_s] = a_1
+                r_0, r_1 = games[cur_s](a_0, a_1)
+                r_sum_0[cur_s] = r_sum_0[cur_s] + r_0
+                r_sum_1[cur_s] = r_sum_1[cur_s] + r_1
+                time_step[cur_s] += 1
+                cur_s = next_state(cur_s, a_0, a_1)
+            else:
+                # print("2nd")
+                tau_0[cur_s] = r_sum_0[cur_s] / time_step[cur_s]
+                tau_1[cur_s] = r_sum_1[cur_s] / time_step[cur_s]
+                agent_0.update_strategy(cur_s, action_t_0[cur_s], tau_0[cur_s])
+                agent_1.update_strategy(cur_s, action_t_1[cur_s], tau_1[cur_s])
+                r_sum_0[cur_s] = 0
+                r_sum_1[cur_s] = 0
+                a_0 = agent_0.choose_action(cur_s)
+                a_1 = agent_1.choose_action(cur_s)
+                action_t_0[cur_s] = a_0
+                action_t_1[cur_s] = a_1
+                r_0, r_1 = games[cur_s](a_0, a_1)
+                r_sum_0[cur_s] = r_sum_0[cur_s] + r_0
+                r_sum_1[cur_s] = r_sum_1[cur_s] + r_1
+                time_step[cur_s] = 0
+                time_step[cur_s] += 1
+                cur_s = next_state(cur_s, a_0, a_1)
         else:
+            # print('3rd')
+            # print('round ', _)
+            # print('r_sum_0 ', r_sum_0, 'r_sum_1 ', r_sum_1)
+            # print('action_0 ', action_t_0, 'action_t_1 ', action_t_1)
+            # print('strategy_0 ', agent_0.strategy, 'strategy_1 ', agent_1.strategy)
             tau_0[cur_s] = r_sum_0[cur_s] / time_step[cur_s]
             tau_1[cur_s] = r_sum_1[cur_s] / time_step[cur_s]
+            # print('cur_s', cur_s)
+            # print('time_step ', time_step)
+            # print('tau_0 ', tau_0, 'tau_1 ', tau_1)
             agent_0.update_strategy(cur_s, action_t_0[cur_s], tau_0[cur_s])
             agent_1.update_strategy(cur_s, action_t_1[cur_s], tau_1[cur_s])
             r_sum_0[cur_s] = 0
