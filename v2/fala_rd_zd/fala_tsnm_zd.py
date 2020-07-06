@@ -11,10 +11,10 @@ from multiprocessing import Pool
 
 
 def valid_s(s_value):
-    if s_value < 0.0:
-        s_new = 0.0
-    elif s_value > 1.0:
-        s_new = 1.0
+    if s_value < 0.01:
+        s_new = 0.01
+    elif s_value > 0.99:
+        s_new = 0.99
     else:
         s_new = s_value
     return s_new
@@ -55,17 +55,18 @@ class Agent:
     def update_strategy(self, s, a, r):
         for action in self.actions:
             if action == a:
-                self.strategy[s][action] = self.strategy[s][action] + self.alpha * r * (1 - self.strategy[s][action])
+                self.strategy[s][action] = valid_s(
+                    self.strategy[s][action] + self.alpha * r * (1 - self.strategy[s][action]))
             else:
-                self.strategy[s][action] = self.strategy[s][action] - self.alpha * r * self.strategy[s][action]
+                self.strategy[s][action] = valid_s(self.strategy[s][action] - self.alpha * r * self.strategy[s][action])
 
     def record_strategy(self):
         self.strategy_trace.append(deepcopy(self.strategy))
 
 
 def run_game_fala(agent_0_init_strategy, agent_1_init_strategy, s_0):
-    agent_0 = Agent(alpha=0.00001, agent_id=0)
-    agent_1 = Agent(alpha=0.00001, agent_id=1)
+    agent_0 = Agent(alpha=0.0000001, agent_id=0)
+    agent_1 = Agent(alpha=0.0000001, agent_id=1)
     agent_0.initial_strategy()
     agent_1.initial_strategy()
     agent_0.set_strategy(agent_0_init_strategy)
@@ -121,12 +122,14 @@ def run_game_fala(agent_0_init_strategy, agent_1_init_strategy, s_0):
                   agent_1.strategy_trace[i][1][1]])
     return p, agent_0.strategy_trace, agent_1.strategy_trace
 
+
 def run_task_fala(p_init):
     p0 = p_init[0]
     q0 = p_init[1]
     p1 = p_init[2]
     q1 = p_init[3]
-    p, a0_st, a1_st = run_game_fala(agent_0_init_strategy=[[1-p0, p0], [1-p1, p1]], agent_1_init_strategy=[[1-q0, q0], [1-q1, q1]], s_0=0)
+    p, a0_st, a1_st = run_game_fala(agent_0_init_strategy=[[1 - p0, p0], [1 - p1, p1]],
+                                    agent_1_init_strategy=[[1 - q0, q0], [1 - q1, q1]], s_0=1)
     abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results"))
     csv_file_name = "/fala_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (p0, q0, p1, q1)
     file_name = abs_path + csv_file_name
