@@ -11,9 +11,12 @@ from multiprocessing import Pool
 
 
 pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
-pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+# pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+pd_game_2 = [[6, 6], [8, 5], [5, 8], [7, 7]]
 
-transition_prob = [0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.9]
+# transition_prob = [0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.9]
+transition_prob = [0.5, 0.3, 0.9, 0.7, 0.3, 0.1, 0.7, 0.5]
+
 
 def play_pd_game_1(a_x, a_y):
     return pd_game_1[a_x * 2 + a_y]
@@ -168,7 +171,7 @@ def run_task_fala(s_init):
     q1 = s_init[3]
     p, x_st, y_st = run_game_fala(agent_x_init_strategy=[[1 - p0, p0], [1 - p1, p1]],
                                   agent_y_init_strategy=[[1 - q0, q0], [1 - q1, q1]], s_0=0)
-    abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_st"))
+    abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_st_zd"))
     csv_file_name = "/fala_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (p0, q0, p1, q1)
     file_name = abs_path + csv_file_name
     d_pd = pd.DataFrame(p)
