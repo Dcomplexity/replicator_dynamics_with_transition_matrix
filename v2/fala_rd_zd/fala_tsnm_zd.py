@@ -56,10 +56,9 @@ class Agent:
     def update_strategy(self, s, a, r):
         for action in self.actions:
             if action == a:
-                self.strategy[s][action] = valid_s(
-                    self.strategy[s][action] + self.alpha * r * (1 - self.strategy[s][action]))
+                self.strategy[s][action] = self.strategy[s][action] + self.alpha * r * (1 - self.strategy[s][action])
             else:
-                self.strategy[s][action] = valid_s(self.strategy[s][action] - self.alpha * r * self.strategy[s][action])
+                self.strategy[s][action] = self.strategy[s][action] - self.alpha * r * self.strategy[s][action]
 
     def record_strategy(self):
         self.strategy_trace.append(deepcopy(self.strategy))

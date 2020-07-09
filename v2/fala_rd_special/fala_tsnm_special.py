@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import math
 from copy import deepcopy
-from game_env_exploration import *
+from game_env_special import *
 from sympy import Matrix
 from scipy.linalg import null_space
 
@@ -56,9 +56,10 @@ class Agent:
     def update_strategy(self, s, a, r):
         for action in self.actions:
             if action == a:
-                self.strategy[s][action] = self.strategy[s][action] + self.alpha * r * (1 - self.strategy[s][action])
+                self.strategy[s][action] = valid_s(
+                    self.strategy[s][action] + self.alpha * r * (1 - self.strategy[s][action]))
             else:
-                self.strategy[s][action] = self.strategy[s][action] - self.alpha * r * self.strategy[s][action]
+                self.strategy[s][action] = valid_s(self.strategy[s][action] - self.alpha * r * self.strategy[s][action])
 
     def record_strategy(self):
         self.strategy_trace.append(deepcopy(self.strategy))
@@ -157,7 +158,7 @@ def run_task_fala(p_init):
     p1 = p_init[2]
     q1 = p_init[3]
     p, a0_st, a1_st = run_game_fala(agent_0_init_strategy=[[1 - p0, p0], [1 - p1, p1]],
-                                    agent_1_init_strategy=[[1 - q0, q0], [1 - q1, q1]], s_0=0)
+                                    agent_1_init_strategy=[[1 - q0, q0], [1 - q1, q1]], s_0=1)
     abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results"))
     csv_file_name = "/fala_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (p0, q0, p1, q1)
     file_name = abs_path + csv_file_name
