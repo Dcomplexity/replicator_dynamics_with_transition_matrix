@@ -145,7 +145,7 @@ def run_task_rd(s_init):
             v, average_payoff = average_game(s_n, qvec, pl, ql, f_p, f_q)
             p0, q0, p1, q1 = evolve(s_n, average_payoff, p0, q0, p1, q1, step_size, v)
             d.append([p0, q0, p1, q1])
-        abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results"))
+        abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_st"))
         csv_file_name = "/rd_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (s_init[0], s_init[1], s_init[2], s_init[3])
         file_name = abs_path + csv_file_name
         d_pd = pd.DataFrame(d)
