@@ -9,14 +9,14 @@ from scipy.linalg import null_space
 from multiprocessing import Pool
 
 
-def valid_s(s_value):
-    if s_value < 0.0:
-        s_new = 0.0
-    elif s_value > 1.0:
-        s_new = 1.0
-    else:
-        s_new = s_value
-    return s_new
+# def valid_s(s_value):
+#     if s_value < 0.0:
+#         s_new = 0.0
+#     elif s_value > 1.0:
+#         s_new = 1.0
+#     else:
+#         s_new = s_value
+#     return s_new
 
 
 def build_markov_chain(qvec, p, q):
@@ -71,7 +71,6 @@ def average_game(s_n, qvec, pl, ql, f_p, f_q):
                 null_matrix = np.transpose(m) - np.eye(8)
                 v = null_space(null_matrix)
                 v = v / np.sum(v)
-                # print(v)
                 r_p = np.dot(f_p, v)[0][0]
                 r_q = np.dot(f_q, v)[0][0]
                 average_payoff[s_i][0][(1 - a_i) * 2 + (1 - a_j)] = r_p
@@ -85,53 +84,49 @@ def average_game(s_n, qvec, pl, ql, f_p, f_q):
     return v, average_payoff
 
 
-def build_payoff_matrix(s_i, average_payoff, id ='p'):
+def build_payoff_matrix(s_i, average_payoff, id='p'):
     if id == 'p':
         apm = np.array([[average_payoff[s_i][0][0], average_payoff[s_i][0][1]],
-                      [average_payoff[s_i][0][2], average_payoff[s_i][0][3]]])
+                        [average_payoff[s_i][0][2], average_payoff[s_i][0][3]]])
     else:
         apm = np.array([[average_payoff[s_i][1][0], average_payoff[s_i][1][2]],
-                      [average_payoff[s_i][1][1], average_payoff[s_i][1][3]]])
+                        [average_payoff[s_i][1][1], average_payoff[s_i][1][3]]])
     return apm
 
 
 def evolve(s_n, average_payoff, p0, q0, p1, q1, step_size, v):
     for s_i in range(s_n):
-        p_m = build_payoff_matrix(s_i, average_payoff, id = 'p')
-        # print('p_m', s_i, p_m)
-        q_m = build_payoff_matrix(s_i, average_payoff, id = 'q')
-        # print('q_m', s_i, q_m)
+        p_m = build_payoff_matrix(s_i, average_payoff, id='p')
+        q_m = build_payoff_matrix(s_i, average_payoff, id='q')
         if s_i == 0:
             p_o = np.dot(p_m, [[q0], [1 - q0]])
             q_o = np.dot(q_m, [[p0], [1 - p0]])
             v_s = np.sum(v[0:4])
-            dp = (np.dot([1, 0], p_o)[0] - np.dot([p0, 1-p0], p_o)[0]) * p0 * v_s
-            dq = (np.dot([1, 0], q_o)[0] - np.dot([q0, 1-q0], q_o)[0]) * q0 * v_s
-            p0 = valid_s(p0 + dp * step_size)
-            q0 = valid_s(q0 + dq * step_size)
-            # print(v_s)
+            dp = (np.dot([1, 0], p_o)[0] - np.dot([p0, 1 - p0], p_o)[0]) * p0 * v_s
+            dq = (np.dot([1, 0], q_o)[0] - np.dot([q0, 1 - q0], q_o)[0]) * q0 * v_s
+            p0 = p0 + dp * step_size
+            q0 = q0 + dq * step_size
         else:
             p_o = np.dot(p_m, [[q1], [1 - q1]])
             q_o = np.dot(q_m, [[p1], [1 - p1]])
             v_s = np.sum(v[4:8])
-            dp = (np.dot([1, 0], p_o)[0] - np.dot([p1, 1-p1], p_o)[0]) * p1 * v_s
-            dq = (np.dot([1, 0], q_o)[0] - np.dot([q1, 1-q1], q_o)[0]) * q1 * v_s
-            p1 = valid_s(p1 + dp * step_size)
-            q1 = valid_s(q1 + dq * step_size)
-            # print(v_s)
+            dp = (np.dot([1, 0], p_o)[0] - np.dot([p1, 1 - p1], p_o)[0]) * p1 * v_s
+            dq = (np.dot([1, 0], q_o)[0] - np.dot([q1, 1 - q1], q_o)[0]) * q1 * v_s
+            p1 = p1 + dp * step_size
+            q1 = q1 + dq * step_size
     return p0, q0, p1, q1
 
 
-def run_task_rd(p_init):
+def run_task_rd(s_init):
     t = np.arange(0, 10e5)
     step_size = 0.001
     s_n = 2
-    print(p_init)
+    print(s_init)
     for p_1, p_2 in [[0.9, 0.1]]:
-        p0 = p_init[0]
-        q0 = p_init[1]
-        p1 = p_init[2]
-        q1 = p_init[3]
+        p0 = s_init[0]
+        q0 = s_init[1]
+        p1 = s_init[2]
+        q1 = s_init[3]
         print(p_1, p_2)
         qvec = [p_1, p_2, p_2, p_2, p_1, p_2, p_2, p_2]
         f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
@@ -151,29 +146,28 @@ def run_task_rd(p_init):
             p0, q0, p1, q1 = evolve(s_n, average_payoff, p0, q0, p1, q1, step_size, v)
             d.append([p0, q0, p1, q1])
         abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results"))
-        csv_file_name = "/rd_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (p_init[0], p_init[1], p_init[2], p_init[3])
+        csv_file_name = "/rd_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (s_init[0], s_init[1], s_init[2], s_init[3])
         file_name = abs_path + csv_file_name
         d_pd = pd.DataFrame(d)
         d_pd.to_csv(file_name, index=None)
 
 
-def read_p_init():
+def read_s_init():
     abs_path = os.getcwd()
     dir_name = os.path.join(abs_path)
-    f = os.path.join(dir_name, "p_init_file.csv")
+    f = os.path.join(dir_name, "s_init_file.csv")
     data = pd.read_csv(f, usecols=['0', '1', '2', '3'])
-    p_init = np.array(data).tolist()
-    return p_init
+    s_init = np.array(data).tolist()
+    return s_init
 
 
 if __name__ == '__main__':
-    p_init_list = read_p_init()
-    init_num = len(p_init_list)
+    s_init_list = read_s_init()
+    init_num = len(s_init_list)
     p_rd = Pool()
     for _ in range(init_num):
-        p_init = p_init_list[_][:]
-        p_rd.apply_async(run_task_rd, args=(p_init,))
+        s_init = s_init_list[_][:]
+        p_rd.apply_async(run_task_rd, args=(s_init,))
     p_rd.close()
     p_rd.join()
     print("All subprocesses done")
-
