@@ -122,13 +122,13 @@ def run_task_rd(s_init):
     step_size = 0.001
     s_n = 2
     print(s_init)
-    for p_1, p_2 in [[0.9, 0.1]]:
+    for z_1, z_2 in [[0.9, 0.1]]:
         p0 = s_init[0]
         q0 = s_init[1]
         p1 = s_init[2]
         q1 = s_init[3]
-        print(p_1, p_2)
-        qvec = [p_1, p_2, p_2, p_2, p_1, p_2, p_2, p_2]
+        print(z_1, z_2)
+        qvec = [z_1, z_2, z_2, z_2, z_1, z_2, z_2, z_2]
         f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
         # f_p = np.array([3, 1, 4, 2, 7, 5, 8, 6])
         f_p = f_p.reshape(f_p.size, 1).transpose()
