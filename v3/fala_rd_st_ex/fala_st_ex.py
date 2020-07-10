@@ -12,11 +12,13 @@ from multiprocessing import Pool
 
 pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
 # pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
-pd_game_2 = [[6, 6], [8, 5], [5, 8], [7, 7]]
+# pd_game_2 = [[6, 6], [8, 5], [5, 8], [7, 7]]
+pd_game_2 = [[7, 7], [9, 6], [6, 9], [8, 8]]
 
 # transition_prob = [0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.9]
 # transition_prob = [0.5, 0.3, 0.9, 0.7, 0.3, 0.1, 0.7, 0.5]
-transition_prob = [18/40, 39/40, 6/40, 27/40, 14/40, 35/40, 2/40, 23/40]
+# transition_prob = [18/40, 39/40, 6/40, 27/40, 14/40, 35/40, 2/40, 23/40]
+transition_prob = [8/20, 19/20, 1/20, 12/20, 8/20, 19/20, 1/20, 12/20]
 
 def play_pd_game_1(a_x, a_y):
     return pd_game_1[a_x * 2 + a_y]
@@ -80,7 +82,7 @@ class Agent:
     def update_strategy(self, s, a, r):
         for action in self.actions:
             if action == a:
-                self.strategy[s][action] = self.strategy[s][action] + self.alpha * r * (1 - self.strategy[s][action])
+                self.strategy[s][action] = self.strategy[s][action] + self.alpha * r * (1.0 - self.strategy[s][action])
             else:
                 self.strategy[s][action] = self.strategy[s][action] - self.alpha * r * self.strategy[s][action]
 
