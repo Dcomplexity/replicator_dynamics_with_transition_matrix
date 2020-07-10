@@ -118,8 +118,8 @@ def evolve(s_n, average_payoff, p0, q0, p1, q1, step_size, v):
 
 
 def run_task_rd(s_init):
-    t = np.arange(0, 10e5)
-    step_size = 0.001
+    t = np.arange(0, int(2 * 10e5))
+    step_size = 0.0001
     s_n = 2
     print(s_init)
     for z_1, z_2 in [[0.9, 0.1]]:
