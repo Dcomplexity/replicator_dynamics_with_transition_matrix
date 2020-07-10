@@ -118,8 +118,8 @@ def evolve(s_n, average_payoff, p0, q0, p1, q1, step_size, v):
 
 
 def run_task_rd(s_init):
-    t = np.arange(0, 10e5)
-    step_size = 0.001
+    t = np.arange(0, int(2 * 10e5))
+    step_size = 0.00001
     s_n = 2
     print(s_init)
     for z_1, z_2 in [[0.9, 0.1]]:
@@ -129,12 +129,12 @@ def run_task_rd(s_init):
         q1 = s_init[3]
         print(z_1, z_2)
         # qvec = [z_1, z_2, z_2, z_2, z_1, z_2, z_2, z_2]
-        qvec = [0.7, 0.9, 0.3, 0.5, 0.5, 0.7, 0.1, 0.3]
+        qvec = [0.7, 0.9, 0.3, 0.5, 0.7, 0.9, 0.3, 0.5]
         # f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
-        f_p = np.array([3, 1, 4, 2, 7, 5, 8, 6])
+        f_p = np.array([3, 1, 4, 2, 8, 6, 9, 7])
         f_p = f_p.reshape(f_p.size, 1).transpose()
         # f_q = np.array([3, 4, 1, 2, 3, 4, 1, 2])
-        f_q = np.array([3, 4, 1, 2, 7, 8, 5, 6])
+        f_q = np.array([3, 4, 1, 2, 8, 9, 6, 7])
         f_q = f_q.reshape(f_q.size, 1).transpose()
         d = []
         d.append([p0, q0, p1, q1])
