@@ -89,9 +89,7 @@ def build_payoff_matrix(s_i, average_payoff, id ='p'):
 def evolve(s_n, average_payoff, p0, q0, p1, q1, step_size, v):
     for s_i in range(s_n):
         p_m = build_payoff_matrix(s_i, average_payoff, id = 'p')
-        print('p_m', s_i, p_m)
         q_m = build_payoff_matrix(s_i, average_payoff, id = 'q')
-        print('q_m', s_i, q_m)
         if s_i == 0:
             p_o = np.dot(p_m, [[q0], [1 - q0]])
             q_o = np.dot(q_m, [[p0], [1 - p0]])
@@ -122,20 +120,22 @@ def run_task():
         f_q = np.array([3, 4, 1, 2, 3, 4, 1, 2])
         # f_q = np.array([3, 4, 1, 2, 7, 8, 5, 6])
         f_q = f_q.reshape(f_q.size, 1).transpose()
-        d = []
+        p0_sub = np.round(np.arange(0.0, 1.01, 0.1), 2)
         q0_sub = np.round(np.arange(0.0, 1.01, 0.01), 2)
-        for q0 in q0_sub:
-            p0 = p_init[0]
-            q0 = q0
-            p1 = p_init[2]
-            q1 = p_init[3]
-            pl = [p0, p0, p0, p0, p1, p1, p1, p1]
-            ql = [q0, q0, q0, q0, q1, q1, q1, q1]
-            v, average_payoff = average_game(s_n, qvec, pl, ql, f_p, f_q)
-            dp0, dq0, dp1, dq1 = evolve(s_n, average_payoff, p0, q0, p1, q1, step_size, v)
-            d.append([dp0, dq0, dp1, dq1])
+        for p0 in p0_sub:
+            d = []
+            for q0 in q0_sub:
+                p0 = p0
+                q0 = q0
+                p1 = p_init[2]
+                q1 = p_init[3]
+                pl = [p0, p0, p0, p0, p1, p1, p1, p1]
+                ql = [q0, q0, q0, q0, q1, q1, q1, q1]
+                v, average_payoff = average_game(s_n, qvec, pl, ql, f_p, f_q)
+                dp0, dq0, dp1, dq1 = evolve(s_n, average_payoff, p0, q0, p1, q1, step_size, v)
+                d.append([dp0, dq0, dp1, dq1])
             abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_dpq_at"))
-            csv_file_name = "/dpq_p1_%.1f_p2_%.1f.csv" % (p_1, p_2)
+            csv_file_name = "/dpq_s0_%.1f_p1_%.1f_p2_%.1f.csv" % (p0, p_1, p_2)
             file_name = abs_path + csv_file_name
             d_pd = pd.DataFrame(d)
             d_pd.to_csv(file_name, index=None)
