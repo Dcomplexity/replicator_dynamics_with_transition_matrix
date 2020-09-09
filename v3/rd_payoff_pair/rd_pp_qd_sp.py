@@ -60,21 +60,24 @@ if __name__ == '__main__':
     f_p = f_p.reshape(f_p.size, 1).transpose()
     f_q = np.array([3, 4, 1, 2, 8, 9, 6, 7])
     f_q = f_q.reshape(f_q.size, 1).transpose()
-    qvec = [12/20, 1/20, 19/20, 8/20, 12/20, 1/20, 19/20, 8/20]
+    # qvec = [12/20, 1/20, 19/20, 8/20, 12/20, 1/20, 19/20, 8/20]
+    qvec = [0.05, 0.05, 0.95, 0.95, 0.05, 0.05, 0.95, 0.95]
     payoff_pair = []
     for _ in np.arange(10e3):
         s_r = np.random.beta(0.5, 0.5, 4)
         p0 = s_r[0]
-        q0 = s_r[1]
+        # q0 = s_r[1]
+        q0 = 0
         p1 = s_r[2]
-        q1 = s_r[3]
+        # q1 = s_r[3]
+        q1 = 0
         pl = [p0, p0, p0, p0, p1, p1, p1, p1]
         ql = [q0, q0, q0, q0, q1, q1, q1, q1]
         payoff_pair.append(get_payoff_pair(qvec, pl, ql, f_p, f_q))
     payoff_pair = np.array(payoff_pair)
     payoff_pair_pd = pd.DataFrame(payoff_pair)
     abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_pp"))
-    csv_file_name = "/payoff_pair_ex.csv"
+    csv_file_name = "/payoff_pair_qd_sp.csv"
     file_name = abs_path + csv_file_name
     payoff_pair_pd.to_csv(file_name, index=None)
 
@@ -87,25 +90,24 @@ if __name__ == '__main__':
     payoff_pair_top = get_payoff_pair(qvec, pl, ql, f_p, f_q)
     payoff_pair_top = np.array(payoff_pair_top)
     payoff_pair_top_pd = pd.DataFrame(payoff_pair_top)
-    csv_file_name = "/payoff_pair_ex_top.csv"
+    csv_file_name = "/payoff_pair_qd_sp_top.csv"
     file_name = abs_path + csv_file_name
     payoff_pair_top_pd.to_csv(file_name, index=None)
 
-
-    payoff_pair_matrix = []
-    for p0 in [0, 1]:
-        for p1 in [0, 1]:
-            for q0 in [0, 1]:
-                for q1 in [0, 1]:
-                    pl = [p0, p0, p0, p0, p1, p1, p1, p1]
-                    ql = [q0, q0, q0, q0, q1, q1, q1, q1]
-                    payoff_pair_matrix.append(get_payoff_pair(qvec, pl, ql, f_p, f_q))
-    payoff_pair_matrix = np.array(payoff_pair_matrix)
-    payoff_pair_matrix_pd = pd.DataFrame(payoff_pair_matrix)
-    abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_pp_matrix"))
-    csv_file_name = "/payoff_pair_matrix_ex.csv"
+    payoff_pair = []
+    for value in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
+        p0 = value
+        q0 = 0
+        p1 = value
+        q1 = 0
+        pl = [p0, p0, p0, p0, p1, p1, p1, p1]
+        ql = [q0, q0, q0, q0, q1, q1, q1, q1]
+        payoff_pair.append(get_payoff_pair(qvec, pl, ql, f_p, f_q))
+    payoff_pair = np.array(payoff_pair)
+    payoff_pair_pd = pd.DataFrame(payoff_pair)
+    csv_file_name = "/payoff_pair_qd_pv_sp.csv"
     file_name = abs_path + csv_file_name
-    payoff_pair_matrix_pd.to_csv(file_name, index=None)
+    payoff_pair_pd.to_csv(file_name, index=None)
 
 
 

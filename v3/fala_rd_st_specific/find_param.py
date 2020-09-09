@@ -25,6 +25,8 @@ import numpy as np
 # f_q = np.array([3, 1, 1, 2, 2.5, 0.5, 0.5, 1.5])
 f_p = np.array([3, 1, 4, 2, 8, 6, 9, 7])
 f_q = np.array([3, 4, 1, 2, 8, 9, 6, 7])
+# f_p = np.array([1.2 - 1, -1, 1.2, 0.5, 0, 0, 0, 0])
+# f_q = np.array([1.2 - 1, 1.2, -1, 0.5, 0, 0, 0, 0])
 print(f_p, f_q)
 
 min_test = -20
@@ -64,5 +66,7 @@ for phi in test_phi:
                         break
                 if flag == 0:
                     # if kai > 0:
-                    print([phi, kai, v1, v2])
+                    if kai > 0 and v1 < 0:
+                        print([phi, kai, v1, v2])
+                        print (t_list)
 

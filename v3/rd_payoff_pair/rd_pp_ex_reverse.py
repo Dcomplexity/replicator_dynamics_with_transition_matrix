@@ -60,7 +60,8 @@ if __name__ == '__main__':
     f_p = f_p.reshape(f_p.size, 1).transpose()
     f_q = np.array([3, 4, 1, 2, 8, 9, 6, 7])
     f_q = f_q.reshape(f_q.size, 1).transpose()
-    qvec = [12/20, 1/20, 19/20, 8/20, 12/20, 1/20, 19/20, 8/20]
+    # qvec = [12/20, 1/20, 19/20, 8/20, 12/20, 1/20, 19/20, 8/20]
+    qvec = [2 / 3, 2 / 3, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 3, 1 / 3]
     payoff_pair = []
     for _ in np.arange(10e3):
         s_r = np.random.beta(0.5, 0.5, 4)
@@ -74,38 +75,22 @@ if __name__ == '__main__':
     payoff_pair = np.array(payoff_pair)
     payoff_pair_pd = pd.DataFrame(payoff_pair)
     abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_pp"))
-    csv_file_name = "/payoff_pair_ex.csv"
+    csv_file_name = "/payoff_pair_ex_reverse.csv"
     file_name = abs_path + csv_file_name
     payoff_pair_pd.to_csv(file_name, index=None)
 
-    p0 = 1
+    p0 = 0
     q0 = 0
-    p1 = 1
+    p1 = 0
     q1 = 0
     pl = [p0, p0, p0, p0, p1, p1, p1, p1]
     ql = [q0, q0, q0, q0, q1, q1, q1, q1]
     payoff_pair_top = get_payoff_pair(qvec, pl, ql, f_p, f_q)
     payoff_pair_top = np.array(payoff_pair_top)
     payoff_pair_top_pd = pd.DataFrame(payoff_pair_top)
-    csv_file_name = "/payoff_pair_ex_top.csv"
+    csv_file_name = "/payoff_pair_ex_reverse_top.csv"
     file_name = abs_path + csv_file_name
     payoff_pair_top_pd.to_csv(file_name, index=None)
-
-
-    payoff_pair_matrix = []
-    for p0 in [0, 1]:
-        for p1 in [0, 1]:
-            for q0 in [0, 1]:
-                for q1 in [0, 1]:
-                    pl = [p0, p0, p0, p0, p1, p1, p1, p1]
-                    ql = [q0, q0, q0, q0, q1, q1, q1, q1]
-                    payoff_pair_matrix.append(get_payoff_pair(qvec, pl, ql, f_p, f_q))
-    payoff_pair_matrix = np.array(payoff_pair_matrix)
-    payoff_pair_matrix_pd = pd.DataFrame(payoff_pair_matrix)
-    abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_pp_matrix"))
-    csv_file_name = "/payoff_pair_matrix_ex.csv"
-    file_name = abs_path + csv_file_name
-    payoff_pair_matrix_pd.to_csv(file_name, index=None)
 
 
 
