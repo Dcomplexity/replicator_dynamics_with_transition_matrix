@@ -90,8 +90,10 @@ def run_task(p_init):
     for p_1, p_2 in [[0.9, 0.1]]:
         print(p_1, p_2)
         # transition_matrix = [[p_2, p_1, p_1, p_2], [p_2, p_1, p_1, p_2]]
-        transition_matrix = [[0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.8, 0.2],
-                             [0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.8, 0.2]]
+        # transition_matrix = [[0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1],
+        #                      [0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1]]
+        transition_matrix = [[0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1],
+                             [0.1, 0.9], [0.9, 0.1], [0.9, 0.1], [0.1, 0.9]]
         p = p_init
         d = []
         d.append(p)
@@ -102,7 +104,7 @@ def run_task(p_init):
             # if _ % 1000 == 0:
             #     print(p)
             d.append(p)
-        abs_path = os.path.abspath(os.path.join(os.getcwd(), "../results_st_at"))
+        abs_path = os.path.abspath(os.path.join(os.getcwd(), "../results_st_in_paper"))
         csv_file_name = "/scrd_ts_st_at_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
         p_init[0], p_init[1], p_init[2], p_init[3])
         file_name = abs_path + csv_file_name

@@ -136,8 +136,9 @@ def run_task_rd(s_init):
         f_p = f_p.reshape(f_p.size, 1).transpose()
         # f_q = np.array([3, 4, 1, 2, 3, 4, 1, 2])
         # f_q = np.array([3, 4, 1, 2, 7, 8, 5, 6])
-        f_q = f_q.reshape(f_q.size, 1).transpose()
         f_q = np.array([3, 10, 0, 2, 4, 10, 0, 1])
+        f_q = f_q.reshape(f_q.size, 1).transpose()
+
         d = []
         d.append([p0, q0, p1, q1])
         for _ in t:

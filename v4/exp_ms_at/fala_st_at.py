@@ -11,9 +11,11 @@ from multiprocessing import Pool
 
 pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
 pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+pd_game_3 = [[2, 2], [4, 1], [1, 4], [3, 3]]
 
-transition_prob = [[0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1],
-                   [0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1]]
+transition_prob = [[0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.8, 0.1, 0.1],
+                   [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.8, 0.1, 0.1],
+                   [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.8, 0.1, 0.1]]
 
 
 def play_pd_game_1(a_x, a_y):
@@ -24,9 +26,13 @@ def play_pd_game_2(a_x, a_y):
     return pd_game_2[a_x * 2 + a_y]
 
 
+def play_pd_game_3(a_x, a_y):
+    return pd_game_3[a_x * 2 + a_y]
+
+
 def next_state(s, a_x, a_y):
     prob = transition_prob[s * 4 + a_x * 2 + a_y]
-    s_ = np.random.choice([0, 1], p=prob)
+    s_ = np.random.choice([0, 1, 2], p=prob)
     return s_
 
 
@@ -45,7 +51,7 @@ class Agent:
         self.id = agent_id
         self.strategy = []
         self.actions = [0, 1]  # 0 for defection and 1 for cooperation
-        self.states = [0, 1]  # there are two state: 0 and 1
+        self.states = [0, 1, 2]  # there are two state: 0 and 1
         self.len_action = len(self.actions)
         self.alpha = alpha
         self.strategy_trace = []
@@ -91,51 +97,50 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
     agent_x.set_strategy(agent_x_init_strategy)
     agent_y.set_strategy(agent_y_init_strategy)
     cur_s = s_0
-    games = [play_pd_game_1, play_pd_game_2]
-    r_sum_x = np.array([0.0, 0.0])  # store the sum of reward of agent_x for each state: state 0 and state 1
-    r_sum_y = np.array([0.0, 0.0])
-    tau_x = np.array([0.0, 0.0])  # store the average reward of agent_x for each state: state 0 and state 1
-    tau_y = np.array([0.0, 0.0])
-    action_t_x = np.array([0, 0])  # for agent_x, the last action taken in state 0 and state 1
-    action_t_y = np.array([0, 0])
-    time_step = np.array([0, 0])  # store the sum of time since last time meeting each state: state 0 and state 1
-    visited = [0, 0]
+    states = [0, 1, 2]
+    games = [play_pd_game_1, play_pd_game_2, play_pd_game_3]
+    r_sum_x = np.array([0.0, 0.0, 0.0])  # store the sum of reward of agent_x for each state: state 0, state 1, state 2
+    r_sum_y = np.array([0.0, 0.0, 0.0])
+    tau_x = np.array([0.0, 0.0, 0.0])  # store the average reward of agent_x for each state: state 0, state 1, state 2
+    tau_y = np.array([0.0, 0.0, 0.0])
+    action_t_x = np.array([0, 0, 0])  # for agent_x, the last action taken in state 0, state 1, state 2
+    action_t_y = np.array([0, 0, 0])
+    time_step = np.array([0, 0, 0])  # store the sum of time since last time meeting each state: state 0, state 1, state 2
+    visited = [0, 0, 0]
     for _ in range(int(10e6)):
         if _ % 10000 == 0:
             print('fala', _)
         agent_x.record_strategy()
         agent_y.record_strategy()
-        if visited[cur_s] == 0:
-            visited[cur_s] = 1
-            r_sum_x[cur_s] = 0
-            r_sum_y[cur_s] = 0
-            time_step[cur_s] = 0
-            a_x = agent_x.choose_action(cur_s)
-            a_y = agent_y.choose_action(cur_s)
-            action_t_x[cur_s] = a_x
-            action_t_y[cur_s] = a_y
-            r_x, r_y = games[cur_s](a_x, a_y)
-            r_sum_x = r_sum_x + r_x
-            r_sum_y = r_sum_y + r_y
-            time_step = time_step + 1
-            cur_s = next_state(cur_s, a_x, a_y)
-        # else:
-        #     tau_x[cur_s] = r_sum_x[cur_s] / time_step[cur_s]
-        #     tau_y[cur_s] = r_sum_y[cur_s] / time_step[cur_s]
-        #     agent_x.update_strategy(cur_s, action_t_x[cur_s], tau_x[cur_s])
-        #     agent_y.update_strategy(cur_s, action_t_y[cur_s], tau_y[cur_s])
-        #     r_sum_x[cur_s] = 0
-        #     r_sum_y[cur_s] = 0
-        #     time_step[cur_s] = 0
-        #     a_x = agent_x.choose_action(cur_s)
-        #     a_y = agent_y.choose_action(cur_s)
-        #     action_t_x[cur_s] = a_x
-        #     action_t_y[cur_s] = a_y
-        #     r_x, r_y = games[cur_s](a_x, a_y)
-        #     r_sum_x[cur_s] = r_sum_x[cur_s] + r_x
-        #     r_sum_y[cur_s] = r_sum_y[cur_s] + r_y
-        #     time_step[cur_s] += 1
-        #     cur_s = next_state(cur_s, a_x, a_y)
+        if visited[cur_s] == 0 or visited[1 - cur_s] == 0:
+            if visited[cur_s] == 0:
+                visited[cur_s] = 1
+                a_x = agent_x.choose_action(cur_s)
+                a_y = agent_y.choose_action(cur_s)
+                action_t_x[cur_s] = a_x
+                action_t_y[cur_s] = a_y
+                r_x, r_y = games[cur_s](a_x, a_y)
+                r_sum_x[cur_s] = r_sum_x[cur_s] + r_x
+                r_sum_y[cur_s] = r_sum_y[cur_s] + r_y
+                time_step[cur_s] += 1
+                cur_s = next_state(cur_s, a_x, a_y)
+            else:
+                tau_x[cur_s] = r_sum_x[cur_s] / time_step[cur_s]
+                tau_y[cur_s] = r_sum_y[cur_s] / time_step[cur_s]
+                agent_x.update_strategy(cur_s, action_t_x[cur_s], tau_x[cur_s])
+                agent_y.update_strategy(cur_s, action_t_y[cur_s], tau_y[cur_s])
+                r_sum_x[cur_s] = 0
+                r_sum_y[cur_s] = 0
+                time_step[cur_s] = 0
+                a_x = agent_x.choose_action(cur_s)
+                a_y = agent_y.choose_action(cur_s)
+                action_t_x[cur_s] = a_x
+                action_t_y[cur_s] = a_y
+                r_x, r_y = games[cur_s](a_x, a_y)
+                r_sum_x[cur_s] = r_sum_x[cur_s] + r_x
+                r_sum_y[cur_s] = r_sum_y[cur_s] + r_y
+                time_step[cur_s] += 1
+                cur_s = next_state(cur_s, a_x, a_y)
         else:
             tau_x[cur_s] = r_sum_x[cur_s] / time_step[cur_s]
             tau_y[cur_s] = r_sum_y[cur_s] / time_step[cur_s]

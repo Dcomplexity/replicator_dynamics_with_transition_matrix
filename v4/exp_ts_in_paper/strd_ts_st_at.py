@@ -200,17 +200,21 @@ def run_task_rd(s_init):
         q1 = s_init[3]
         print(z_1, z_2)
         # qvec = [z_1, z_2, z_2, z_2, z_1, z_2, z_2, z_2]
-        qmatrix = [[0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.1, 0.9],
-                   [0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.1, 0.9]]
+        # qmatrix = [[0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.1, 0.9],
+        #            [0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.1, 0.9]]
+        qmatrix = [[0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1],
+                   [0.1, 0.9], [0.9, 0.1], [0.9, 0.1], [0.1, 0.9]]
         qmatrix0 = [[1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0],
                     [1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0]]
         qmatrix1 = [[0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0],
                     [0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]
-        f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
+        # f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
         # f_p = np.array([3, 1, 4, 2, 7, 5, 8, 6])
+        f_p = np.array([3, 0, 10, 2, 4, 0, 10, 1])
         f_p = f_p.reshape(f_p.size, 1).transpose()
-        f_q = np.array([3, 4, 1, 2, 3, 4, 1, 2])
+        # f_q = np.array([3, 4, 1, 2, 3, 4, 1, 2])
         # f_q = np.array([3, 4, 1, 2, 7, 8, 5, 6])
+        f_q = np.array([3, 10, 0, 2, 4, 10, 0, 1])
         f_q = f_q.reshape(f_q.size, 1).transpose()
         d = []
         d.append([p0, q0, p1, q1])
@@ -275,7 +279,7 @@ def run_task_rd(s_init):
             p1 = p1 + dp1 * step_size
             q1 = q1 + dq1 * step_size
             d.append([p0, q0, p1, q1])
-        abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_st_at"))
+        abs_path = os.path.abspath(os.path.join(os.getcwd(), "results_st_in_paper"))
         csv_file_name = "/strd_ts_st_at_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
         s_init[0], s_init[1], s_init[2], s_init[3])
         file_name = abs_path + csv_file_name
