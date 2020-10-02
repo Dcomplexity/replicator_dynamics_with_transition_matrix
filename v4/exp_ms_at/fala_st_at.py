@@ -194,12 +194,12 @@ def read_s_init():
 
 
 if __name__ == '__main__':
-    # p_fala = Pool()
+    p_fala = Pool()
     s_init_list = read_s_init()
-    # init_num = len(s_init_list)
-    # for _ in range(init_num):
-    #     s_init = s_init_list[_][:]
-    #     p_fala.apply_async(run_task_fala, args=(s_init,))
-    # p_fala.close()
-    # p_fala.join()
-    # print("All subprocesses done")
+    init_num = len(s_init_list)
+    for _ in range(init_num):
+        s_init = s_init_list[_][:]
+        p_fala.apply_async(run_task_fala, args=(s_init,))
+    p_fala.close()
+    p_fala.join()
+    print("All subprocesses done")
