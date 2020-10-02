@@ -80,33 +80,33 @@ def evolve(strategy, step_size, transition_matrix):
     return [s00, s01, s10, s11]
 
 
-def run_task(p_init):
-    states = [0, 1]
-    actions = [0, 1]
-    t = np.arange(0, 1000000)
-    # t = np.arange(0, 1000)
-    step_length = 0.001
-    print(p_init)
-    for p_1, p_2 in [[0.9, 0.1], [0.5, 0.5]]:
-        print(p_1, p_2)
-        # transition_matrix = [[p_2, p_1, p_1, p_2], [p_2, p_1, p_1, p_2]]
-        transition_matrix = [[p_1, p_1, p_1, p_2], [p_2, p_2, p_2, p_1]]
-        p = p_init
-        d = []
-        d.append(p)
-        for _ in t:
-            if _ % 1000 == 0:
-                print('scrd', _)
-            p = evolve(p, step_length, transition_matrix)
-            # if _ % 1000 == 0:
-            #     print(p)
-            d.append(p)
-        abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results"))
-        csv_file_name = "/p1_%.1f_p2_%.1f_pl_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
-            p_1, p_2, p_init[0], p_init[1], p_init[2], p_init[3])
-        file_name = abs_path + csv_file_name
-        d_pd = pd.DataFrame(d)
-        d_pd.to_csv(file_name, index=None)
+# def run_task(p_init):
+#     states = [0, 1]
+#     actions = [0, 1]
+#     t = np.arange(0, 1000000)
+#     # t = np.arange(0, 1000)
+#     step_length = 0.001
+#     print(p_init)
+#     for p_1, p_2 in [[0.9, 0.1], [0.5, 0.5]]:
+#         print(p_1, p_2)
+#         # transition_matrix = [[p_2, p_1, p_1, p_2], [p_2, p_1, p_1, p_2]]
+#         transition_matrix = [[p_1, p_1, p_1, p_2], [p_2, p_2, p_2, p_1]]
+#         p = p_init
+#         d = []
+#         d.append(p)
+#         for _ in t:
+#             if _ % 1000 == 0:
+#                 print('scrd', _)
+#             p = evolve(p, step_length, transition_matrix)
+#             # if _ % 1000 == 0:
+#             #     print(p)
+#             d.append(p)
+#         abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results"))
+#         csv_file_name = "/p1_%.1f_p2_%.1f_pl_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
+#             p_1, p_2, p_init[0], p_init[1], p_init[2], p_init[3])
+#         file_name = abs_path + csv_file_name
+#         d_pd = pd.DataFrame(d)
+#         d_pd.to_csv(file_name, index=None)
 
 
 def read_s_init():
@@ -116,6 +116,23 @@ def read_s_init():
     data = pd.read_csv(f, usecols=['0', '1', '2', '3'])
     s_init = np.array(data).tolist()
     return s_init
+
+def run_task():
+    s_l = [0, 1]
+    a_l = [0, 1]
+    p_1 = 0.9
+    p_2 = 0.1
+    transition_matrix = [[p_1, p_1, p_1, p_2], [p_2, p_2, p_2, p_1]]
+    s00 = 0.4
+    s01 = 0.5
+    s10 = 0.7
+    s11 = 0.6
+    pi = [{0: [1 - s00, s00], 1: [1 - s01, s01]}, {0: [1 - s10, s10], 1: [1 - s11, s11]}]
+    s_dist, p_matrix = sad.run(pi, transition_matrix)
+    s_pi_dist = spd.gen_s_pi_dist(s_l, a_l, pi, transition_matrix)
+    payoff_1 = calc_payoff(0, 0, a_l, [0, 1], p_matrix, pi)
+    payoff_2 = calc_payoff(0, 0, a_l, pi[0][1], p_matrix, pi)
+    print(payoff_1, payoff_2)
 
 if __name__ == '__main__':
     # parser = argparse.ArgumentParser()
@@ -131,12 +148,14 @@ if __name__ == '__main__':
     # p_2 = args.p2
     # print(p_1, p_2)
 
-    s_init_list = read_s_init()
-    init_num = len(s_init_list)
-    p = Pool()
-    for _ in range(init_num):
-        s_init = s_init_list[_][:]
-        p.apply_async(run_task, args=(s_init,))
-    p.close()
-    p.join()
-    print("All subpocesses done.")
+    # s_init_list = read_s_init()
+    # init_num = len(s_init_list)
+    # p = Pool()
+    # for _ in range(init_num):
+    #     s_init = s_init_list[_][:]
+    #     p.apply_async(run_task, args=(s_init,))
+    # p.close()
+    # p.join()
+    # print("All subpocesses done.")
+
+    run_task()

@@ -2,21 +2,24 @@ import numpy as np
 from scipy.linalg import solve
 from game_env import *
 
+# This is for the section 3.1 Average reward game
 
-def q_s_z(s, z, a_l, pi, transition_matrix):
+# q_s_z means the calculation of  Q^i(s_ap)
+def q_sap_z(s_ap, z, a_l, pi, transition_matrix):
     q = 0
     for a_x in a_l:
         for a_y in a_l:
-            q += transition_prob(s, z, a_x, a_y, transition_matrix) * pi[0][s][a_x] * pi[1][s][a_y]
+            q += transition_prob(s_ap, z, a_x, a_y, transition_matrix) * pi[0][s_ap][a_x] * pi[1][s_ap][a_y]
     return q
 
 
+# The element if for Q^{i}, the index is for s_ap to z
 def q_matrix(s_l, a_l, pi, transition_matrix):
     q_m = []
     for s in s_l:
         q_m.append([])
         for z in s_l:
-            q_m[s].append(q_s_z(s, z, a_l, pi, transition_matrix))
+            q_m[s].append(q_sap_z(s, z, a_l, pi, transition_matrix))
     return q_m
 
 
@@ -52,8 +55,10 @@ def gen_payoff_pair(pds, a_l, s, a_x, a_y, pi, s_d):
     p = np.array(pds[s](a_x, a_y)) * s_d[s * 4 + a_x * 2 + a_y][s]
     for a_x_ in a_l:
         for a_y_ in a_l:
-            if a_x_ == a_y_ == 1:
-                p += np.array(pds[1 - s](a_x_, a_y_)) * pi[0][1 - s][a_x_] * pi[1][1 - s][a_y_] * \
+            # if a_x_ == a_y_ == 1:
+            #     p += np.array(pds[1 - s](a_x_, a_y_)) * pi[0][1 - s][a_x_] * pi[1][1 - s][a_y_] * \
+            #      s_d[s * 4 + a_x * 2 + a_y][1 - s]
+            p += np.array(pds[1 - s](a_x_, a_y_)) * pi[0][1 - s][a_x_] * pi[1][1 - s][a_y_] * \
                  s_d[s * 4 + a_x * 2 + a_y][1 - s]
     return p
 

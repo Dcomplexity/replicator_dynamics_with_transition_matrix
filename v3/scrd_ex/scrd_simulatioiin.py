@@ -87,10 +87,11 @@ def run_task(p_init):
     # t = np.arange(0, 1000)
     step_length = 0.001
     print(p_init)
-    for p_1, p_2 in [[0.9, 0.1], [0.5, 0.5]]:
+    for p_1, p_2 in [[0.9, 0.1]]:
         print(p_1, p_2)
         # transition_matrix = [[p_2, p_1, p_1, p_2], [p_2, p_1, p_1, p_2]]
-        transition_matrix = [[p_1, p_1, p_1, p_2], [p_2, p_2, p_2, p_1]]
+        # transition_matrix = [[p_1, p_1, p_1, p_2], [p_2, p_2, p_2, p_1]]
+        transition_matrix = [[0.6, 0.05, 0.95, 0.4], [0.4, 0.95, 0.05, 0.6]]
         p = p_init
         d = []
         d.append(p)
@@ -102,8 +103,7 @@ def run_task(p_init):
             #     print(p)
             d.append(p)
         abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results"))
-        csv_file_name = "/p1_%.1f_p2_%.1f_pl_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
-            p_1, p_2, p_init[0], p_init[1], p_init[2], p_init[3])
+        csv_file_name = "/scrd_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (p_init[0], p_init[1], p_init[2], p_init[3])
         file_name = abs_path + csv_file_name
         d_pd = pd.DataFrame(d)
         d_pd.to_csv(file_name, index=None)

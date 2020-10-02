@@ -22,34 +22,55 @@ def valid_s(s_value):
 
 def calc_payoff(agent_id, s, a_l, mixed_s, p_m, pi):
     p = 0
+    # if agent_id == 0:
+    #     for act_i in a_l:
+    #         p_j = 0
+    #         for act_j in a_l:
+    #             p_j += p_m[s * 4 + act_i * 2 + act_j][0] * pi[1 - agent_id][s][act_j]
+    #         p += mixed_s[act_i] * p_j
+    # else:
+    #     for act_i in a_l:
+    #         p_j = 0
+    #         for act_j in a_l:
+    #             p_j += p_m[s * 4 + act_j * 2 + act_i][1] * pi[1 - agent_id][s][act_j]
+    #         p += mixed_s[act_i] * p_j
     if agent_id == 0:
         for act_i in a_l:
-            p_j = 0
+            p_i = 0
             for act_j in a_l:
-                p_j += p_m[s * 4 + act_i * 2 + act_j][0] * pi[1 - agent_id][s][act_j]
-            p += mixed_s[act_i] * p_j
+                p_i += p_m[s * 4 + act_i * 2 + act_j][0] * pi[1 - agent_id][s][act_j]
+            p += mixed_s[act_i] * p_i
     else:
-        for act_i in a_l:
+        for act_j in a_l:
             p_j = 0
-            for act_j in a_l:
-                p_j += p_m[s * 4 + act_j * 2 + act_i][1] * pi[1 - agent_id][s][act_j]
-            p += mixed_s[act_i] * p_j
+            for act_i in a_l:
+                p_j += p_m[s * 4 + act_i * 2 + act_j][1] * pi[1 - agent_id][s][act_i]
+            p += mixed_s[act_j] * p_j
     return p
 
 
 def evolve(strategy, step_size, transition_matrix):
     s_l = [0, 1]
     a_l = [0, 1]
+    # The initial strategies are set here.
     s00, s01, s10, s11 = strategy
+    # s00 = strategy[0]
+    # s01 = strategy[2]
+    # s10 = strategy[1]
+    # s11 = strategy[3]
     pi = [{0: [1 - s00, s00], 1: [1 - s01, s01]}, {0: [1 - s10, s10], 1: [1 - s11, s11]}]
     s_dist, p_matrix = sad.run(pi, transition_matrix)
     s_pi_dist = spd.gen_s_pi_dist(s_l, a_l, pi, transition_matrix)
+    # agent 0 in state 0
     ds00 = (calc_payoff(0, 0, a_l, [0, 1], p_matrix, pi) - calc_payoff(0, 0, a_l, pi[0][0], p_matrix, pi)) * s00 * \
            s_pi_dist[0]
+    # agent 0 in state 1
     ds01 = (calc_payoff(0, 1, a_l, [0, 1], p_matrix, pi) - calc_payoff(0, 1, a_l, pi[0][1], p_matrix, pi)) * s01 * \
            s_pi_dist[1]
+    # agent 1 in state 0
     ds10 = (calc_payoff(1, 0, a_l, [0, 1], p_matrix, pi) - calc_payoff(1, 0, a_l, pi[1][0], p_matrix, pi)) * s10 * \
            s_pi_dist[0]
+    # agent 1 in state 1
     ds11 = (calc_payoff(1, 1, a_l, [0, 1], p_matrix, pi) - calc_payoff(1, 1, a_l, pi[1][1], p_matrix, pi)) * s11 * \
            s_pi_dist[1]
     s00 = valid_s(s00 + ds00 * step_size)
@@ -90,7 +111,7 @@ def run_task(p_init):
 def read_s_init():
     abs_path = os.getcwd()
     dir_name = os.path.join(abs_path)
-    f = os.path.join(dir_name, "s_init_file.csv")
+    f = os.path.join(dir_name, "scrd_s_init_file.csv")
     data = pd.read_csv(f, usecols=['0', '1', '2', '3'])
     s_init = np.array(data).tolist()
     return s_init
@@ -118,5 +139,3 @@ if __name__ == '__main__':
     p.close()
     p.join()
     print("All subpocesses done.")
-
-
