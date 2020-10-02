@@ -133,13 +133,13 @@ if __name__ == '__main__':
     # print(p_1, p_2)
 
     s_init_list = read_s_init()
-    # init_num = len(s_init_list)
-    # p = Pool()
-    # for _ in range(init_num):
-    #     s_init = s_init_list[_][:]
-    #     p.apply_async(run_task, args=(s_init,))
-    # p.close()
-    # p.join()
-    # print("All subpocesses done.")
+    init_num = len(s_init_list)
+    p = Pool()
+    for _ in range(init_num):
+        s_init = s_init_list[_][:]
+        p.apply_async(run_task, args=(s_init,))
+    p.close()
+    p.join()
+    print("All subpocesses done.")
 
-    run_task(s_init_list[0])
+    # run_task(s_init_list[0])
