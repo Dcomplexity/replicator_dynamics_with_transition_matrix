@@ -2,6 +2,7 @@ import numpy as np
 from scipy.linalg import solve
 from game_env import *
 
+
 # This is for the section 3.1 Average reward game
 
 # q_s_z means the calculation of  Q^i(s_ap)
@@ -28,12 +29,21 @@ def gen_s_a_dist(s_l, a_l, s, a_x, a_y, pi, transition_matrix):
     if s == 0:
         # a = np.array([[transition_prob(s, s, a_x, a_y) - 1, q_m[1-s][s]], [transition_prob(s, 1-s, a_x, a_y), q_m[1-s][1-s] - 1]])
         # a = np.array([[transition_prob(s, s, a_x, a_y) - 1, q_m[1-s][s]], [1, 1]])
-        a = np.array([[transition_prob(s, 1 - s, a_x, a_y, transition_matrix), q_m[1 - s][1 - s] - 1], [1, 1]])
+        a = np.array([[transition_prob(0, 1, a_x, a_y, transition_matrix), q_m[1][1] - 1, q_m[2][1]],
+                      [transition_prob(0, 2, a_x, a_y, transition_matrix), q_m[1][2], q_m[2][2] - 1],
+                      [1, 1, 1]])
     elif s == 1:
         # a = np.array([[q_m[1-s][1-s] - 1, transition_prob(s, 1-s, a_x, a_y)], [q_m[1-s][s], transition_prob(s, s, a_x, a_y)]])
         # a = np.array([[q_m[1-s][1-s] - 1, transition_prob(s, 1-s, a_x, a_y)], [1, 1]])
-        a = np.array([[q_m[1 - s][s], transition_prob(s, s, a_x, a_y, transition_matrix) - 1], [1, 1]])
-    b = np.array([0, 1])
+        a = np.array([[q_m[0][0] - 1, transition_prob(1, 0, a_x, a_y, transition_matrix), q_m[2][0]],
+                      [q_m[0][2], transition_prob(1, 2, a_x, a_y, transition_matrix), q_m[2][2] - 1],
+                      [1, 1, 1]])
+    elif s == 2:
+        a = np.array([[q_m[0][0] - 1, q_m[1][0], transition_prob(2, 0, a_x, a_y, transition_matrix)],
+                      [q_m[0][1], q_m[1][1] - 1, transition_prob(2, 1, a_x, a_y, transition_matrix)],
+                      [1, 1, 1]])
+
+    b = np.array([0, 0, 1])
     x = solve(a, b)
     # print(s, a_x, a_y, x)
     # print(x)

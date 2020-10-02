@@ -59,7 +59,8 @@ def evolve(strategy, step_size, transition_matrix):
     # s01 = strategy[2]
     # s10 = strategy[1]
     # s11 = strategy[3]
-    pi = [{0: [1 - s00, s00], 1: [1 - s01, s01]}, {0: [1 - s10, s10], 1: [1 - s11, s11]}]
+    pi = [{0: [1 - s00, s00], 1: [1 - s01, s01], 2: [1 - s02, s02]},
+          {0: [1 - s10, s10], 1: [1 - s11, s11], 2: [1 - s12, s12]}]
     s_dist, p_matrix = sad.run(pi, transition_matrix)
     s_pi_dist = spd.gen_s_pi_dist(s_l, a_l, pi, transition_matrix)
     # agent 0 in state 0
@@ -106,7 +107,7 @@ def run_task(p_init):
             d.append(p)
         abs_path = os.path.abspath(os.path.join(os.getcwd(), "../results_st_at"))
         csv_file_name = "/scrd_ms_st_at_%.2f_%.2f_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
-        p_init[0], p_init[1], p_init[2], p_init[3], p_init[4], p_init[5])
+            p_init[0], p_init[1], p_init[2], p_init[3], p_init[4], p_init[5])
         file_name = abs_path + csv_file_name
         d_pd = pd.DataFrame(d)
         d_pd.to_csv(file_name, index=None)

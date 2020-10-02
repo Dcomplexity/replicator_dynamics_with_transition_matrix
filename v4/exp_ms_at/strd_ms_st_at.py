@@ -212,13 +212,13 @@ def read_s_init():
 
 if __name__ == '__main__':
     s_init_list = read_s_init()
-    # init_num = len(s_init_list)
-    # p_rd = Pool()
-    # for _ in range(init_num):
-    #     s_init = s_init_list[_][:]
-    #     p_rd.apply_async(run_task_rd, args=(s_init,))
-    # p_rd.close()
-    # p_rd.join()
-    # print("All subprocesses done")
-    run_task_rd(s_init_list[0])
+    init_num = len(s_init_list)
+    p_rd = Pool()
+    for _ in range(init_num):
+        s_init = s_init_list[_][:]
+        p_rd.apply_async(run_task_rd, args=(s_init,))
+    p_rd.close()
+    p_rd.join()
+    print("All subprocesses done")
+    # run_task_rd(s_init_list[0])
     # run_task()
