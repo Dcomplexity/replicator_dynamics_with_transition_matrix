@@ -19,7 +19,7 @@ from multiprocessing import Pool
 #     return s_new
 
 
-def build_markov_chain(qvec, p, q):
+def build_markov_chain(qmatrix, p, q):
     # m = np.array([[qvec[0] * p[0] * q[0], qvec[0] * p[0] * (1 - q[0]), qvec[0] * (1 - p[0]) * q[0],
     #                qvec[0] * (1 - p[0]) * (1 - q[0]),
     #                (1 - qvec[0]) * p[4] * q[4], (1 - qvec[0]) * p[4] * (1 - q[4]), (1 - qvec[0]) * (1 - p[4]) * q[4],
@@ -52,17 +52,11 @@ def build_markov_chain(qvec, p, q):
     #                qvec[7] * (1 - p[3]) * (1 - q[3]),
     #                (1 - qvec[7]) * p[7] * q[7], (1 - qvec[7]) * p[7] * (1 - q[7]), (1 - qvec[7]) * (1 - p[7]) * q[7],
     #                (1 - qvec[7]) * (1 - p[7]) * (1 - q[7])]])
-    m = np.ones((8, 8))
+    m = np.ones((12, 12))
     for i in range(np.size(m, axis=0)):
         for j in range(np.size(m, axis=1)):
-            if j % 4 == 0:
-                m[i][j] = qvec[i] * p[j // 4] * q[j // 4]
-            elif j % 4 == 1:
-                m[i][j] = qvec[i] * p[j // 4] * (1 - q[j // 4])
-            elif j % 4 == 2:
-                m[i][j] = qvec[i] * (1 - p[j // 4]) * q[j // 4]
-            else:
-                m[i][j] = qvec[i] * (1 - p[j // 4]) * (1 - q[j // 4])
+            if j
+            m[i][j] = qmatrix[i][j//4] *
     return m
 
 
@@ -83,8 +77,9 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
     if agent_id == 0:
         pa = pl[:]
         qa = ql[:]
-        pa[s] = a_p
-        qa[s] = a_q
+        for s_j in range(4):
+            pa[s * 4 + s_j] = a_p
+            qa[s * 4 + s_j] = a_q
         m = build_markov_chain(qvec, pa, qa)
         null_matrix = np.transpose(m) - np.eye(8)
         v = null_space(null_matrix)
@@ -94,8 +89,9 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
     elif agent_id == 1:
         pa = pl[:]
         qa = ql[:]
-        pa[s] = a_p
-        qa[s] = a_q
+        for s_j in range(4):
+            pa[s * 4 + s_j] = a_p
+            qa[s * 4 + s_j] = a_q
         m = build_markov_chain(qvec, pa, qa)
         null_matrix = np.transpose(m) - np.eye(8)
         v = null_space(null_matrix)
@@ -187,7 +183,7 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
 
 
 def run_task_rd(s_init):
-    t = np.arange(0, int(10e2))
+    t = np.arange(0, int(10e5))
     step_size = 0.001
     s_n = 2
     print(s_init)
@@ -198,6 +194,9 @@ def run_task_rd(s_init):
         q1 = s_init[3]
         print(z_1, z_2)
         qvec = [z_1, z_2, z_2, z_2, z_1, z_2, z_2, z_2]
+        qmatrix = [[0.9, 0.05, 0.05], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45],
+                   [0.9, 0.05, 0.05], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45],
+                   [0.9, 0.05, 0.05], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45]]
         qvec0 = [1 for i in range(8)]
         qvec1 = [0 for i in range(8)]
         f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
@@ -211,8 +210,8 @@ def run_task_rd(s_init):
         for _ in t:
             if _ % 1000 == 0:
                 print('rd', _)
-            pl = [p0, p1]
-            ql = [q0, q1]
+            pl = [p0, p0, p0, p0, p1, p1, p1, p1]
+            ql = [q0, q0, q0, q0, q1, q1, q1, q1]
             # calc_expected_payoff(qvec, pl, ql, f_p, f_q)
             v, r_p_e, r_q_e = calc_expected_payoff(qvec, pl, ql, f_p, f_q)
             # calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q)
@@ -260,7 +259,8 @@ def run_task_rd(s_init):
             q1 = q1 + dq1 * step_size
             d.append([p0, q0, p1, q1])
         abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_strd_at"))
-        csv_file_name = "/strd_pl_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (s_init[0], s_init[1], s_init[2], s_init[3])
+        csv_file_name = "/p1_%.1f_p2_%.1f_pl_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
+            z_1, z_2, s_init[0], s_init[1], s_init[2], s_init[3])
         file_name = abs_path + csv_file_name
         d_pd = pd.DataFrame(d)
         d_pd.to_csv(file_name, index=None)
