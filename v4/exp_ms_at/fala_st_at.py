@@ -90,8 +90,8 @@ class Agent:
 
 
 def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
-    agent_x = Agent(alpha=0.00001, agent_id=0)
-    agent_y = Agent(alpha=0.00001, agent_id=1)
+    agent_x = Agent(alpha=0.00002, agent_id=0)
+    agent_y = Agent(alpha=0.00002, agent_id=1)
     agent_x.initial_strategy()
     agent_y.initial_strategy()
     agent_x.set_strategy(agent_x_init_strategy)
@@ -194,12 +194,12 @@ def read_s_init():
 
 
 if __name__ == '__main__':
-    p_fala = Pool()
+    # p_fala = Pool()
     s_init_list = read_s_init()
-    init_num = len(s_init_list)
-    for _ in range(init_num):
-        s_init = s_init_list[_][:]
-        p_fala.apply_async(run_task_fala, args=(s_init,))
-    p_fala.close()
-    p_fala.join()
-    print("All subprocesses done")
+    # init_num = len(s_init_list)
+    # for _ in range(init_num):
+    #     s_init = s_init_list[_][:]
+    #     p_fala.apply_async(run_task_fala, args=(s_init,))
+    # p_fala.close()
+    # p_fala.join()
+    # print("All subprocesses done")

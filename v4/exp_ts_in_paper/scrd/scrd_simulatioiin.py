@@ -53,7 +53,7 @@ def evolve(strategy, step_size, transition_matrix):
     s_l = [0, 1]
     a_l = [0, 1]
     # The initial strategies are set here.
-    s00, s01, s10, s11 = strategy
+    s00, s10, s01, s11 = strategy
     # s00 = strategy[0]
     # s01 = strategy[2]
     # s10 = strategy[1]
@@ -77,7 +77,7 @@ def evolve(strategy, step_size, transition_matrix):
     s01 = valid_s(s01 + ds01 * step_size)
     s10 = valid_s(s10 + ds10 * step_size)
     s11 = valid_s(s11 + ds11 * step_size)
-    return [s00, s01, s10, s11]
+    return [s00, s10, s01, s11]
 
 
 def run_task(p_init):
@@ -115,7 +115,7 @@ def run_task(p_init):
 def read_s_init():
     abs_path = os.getcwd()
     dir_name = os.path.join(abs_path)
-    f = os.path.join(dir_name, "scrd_s_init_file.csv")
+    f = os.path.join(dir_name, "s_init_file.csv")
     data = pd.read_csv(f, usecols=['0', '1', '2', '3'])
     s_init = np.array(data).tolist()
     return s_init
