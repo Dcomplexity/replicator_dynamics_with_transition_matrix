@@ -83,7 +83,7 @@ def evolve(strategy, step_size, transition_matrix):
 def run_task(p_init):
     states = [0, 1]
     actions = [0, 1]
-    t = np.arange(0, 1000000)
+    t = np.arange(0, 10e3)
     # t = np.arange(0, 1000)
     step_length = 0.001
     print(p_init)
@@ -101,9 +101,9 @@ def run_task(p_init):
             # if _ % 1000 == 0:
             #     print(p)
             d.append(p)
-        abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results"))
-        csv_file_name = "/p1_%.1f_p2_%.1f_pl_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
-            p_1, p_2, p_init[0], p_init[1], p_init[2], p_init[3])
+        abs_path = os.path.abspath(os.path.join(os.getcwd(), "../results_st_at"))
+        csv_file_name = "/scrd_ts_st_at_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
+        p_init[0], p_init[1], p_init[2], p_init[3])
         file_name = abs_path + csv_file_name
         d_pd = pd.DataFrame(d)
         d_pd.to_csv(file_name, index=None)
@@ -112,17 +112,17 @@ def run_task(p_init):
 def read_s_init():
     abs_path = os.getcwd()
     dir_name = os.path.join(abs_path)
-    f = os.path.join(dir_name, "scrd_s_init_file.csv")
+    f = os.path.join(dir_name, "../scrd_s_init_file.csv")
     data = pd.read_csv(f, usecols=['0', '1', '2', '3'])
     s_init = np.array(data).tolist()
     return s_init
+
 
 if __name__ == '__main__':
     # parser = argparse.ArgumentParser()
     # parser.add_argument('-p1', '--p1', type=float, default=0.9, help="transition probability")
     # parser.add_argument('-p2', '--p2', type=float, default=0.1, help="transition probability")
     # args = parser.parse_args()
-
 
     # transition_matrix = [[0.1, 0.1, 0.1, 0.9], [0.9, 0.9, 0.9, 0.1]]
     # transition_matrix = [[0.9, 0.9, 0.9, 0.1], [0.1, 0.1, 0.1, 0.9]]
@@ -132,11 +132,13 @@ if __name__ == '__main__':
     # print(p_1, p_2)
 
     s_init_list = read_s_init()
-    init_num = len(s_init_list)
-    p = Pool()
-    for _ in range(init_num):
-        s_init = s_init_list[_][:]
-        p.apply_async(run_task, args=(s_init,))
-    p.close()
-    p.join()
-    print("All subpocesses done.")
+    # init_num = len(s_init_list)
+    # p = Pool()
+    # for _ in range(init_num):
+    #     s_init = s_init_list[_][:]
+    #     p.apply_async(run_task, args=(s_init,))
+    # p.close()
+    # p.join()
+    # print("All subpocesses done.")
+
+    run_task(s_init_list[0])

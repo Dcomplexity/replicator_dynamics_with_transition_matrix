@@ -276,7 +276,7 @@ def run_task_rd(s_init):
             q1 = q1 + dq1 * step_size
             d.append([p0, q0, p1, q1])
         abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_st_at"))
-        csv_file_name = "/strd_ts_st_at_pl_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
+        csv_file_name = "/strd_ts_st_at_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
         s_init[0], s_init[1], s_init[2], s_init[3])
         file_name = abs_path + csv_file_name
         d_pd = pd.DataFrame(d)
