@@ -20,5 +20,5 @@ if __name__ == '__main__':
     scrd_s_init = pd.DataFrame(s_init)
     abs_path = os.getcwd()
     dir_name = os.path.join(abs_path)
-    f = os.path.join(dir_name, "../scrd_s_init_file.csv")
+    f = os.path.join(dir_name, "scrd_s_init_file.csv")
     scrd_s_init.to_csv(f)

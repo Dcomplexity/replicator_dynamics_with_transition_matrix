@@ -83,19 +83,20 @@ def evolve(strategy, step_size, transition_matrix):
 def run_task(p_init):
     states = [0, 1]
     actions = [0, 1]
-    t = np.arange(0, 10e3)
+    t = np.arange(0, 10e5)
     # t = np.arange(0, 1000)
     step_length = 0.001
     print(p_init)
-    for p_1, p_2 in [[0.9, 0.1], [0.5, 0.5]]:
+    for p_1, p_2 in [[0.9, 0.1]]:
         print(p_1, p_2)
         # transition_matrix = [[p_2, p_1, p_1, p_2], [p_2, p_1, p_1, p_2]]
-        transition_matrix = [[p_1, p_1, p_1, p_2], [p_2, p_2, p_2, p_1]]
+        transition_matrix = [[0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1],
+                             [0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1]]
         p = p_init
         d = []
         d.append(p)
         for _ in t:
-            if _ % 1000 == 0:
+            if _ % 10000 == 0:
                 print('scrd', _)
             p = evolve(p, step_length, transition_matrix)
             # if _ % 1000 == 0:
@@ -112,7 +113,7 @@ def run_task(p_init):
 def read_s_init():
     abs_path = os.getcwd()
     dir_name = os.path.join(abs_path)
-    f = os.path.join(dir_name, "../scrd_s_init_file.csv")
+    f = os.path.join(dir_name, "scrd_s_init_file.csv")
     data = pd.read_csv(f, usecols=['0', '1', '2', '3'])
     s_init = np.array(data).tolist()
     return s_init

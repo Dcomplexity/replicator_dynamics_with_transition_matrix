@@ -24,17 +24,11 @@ def play_pd_game_2(a_x, a_y):
 
 
 def transition_prob(s, s_, a_x, a_y, transition_matrix):
-    if s != s_:
-        return transition_matrix[s][a_x * 2 + a_y]
-    else:
-        return 1 - transition_matrix[s][a_x * 2 + a_y]
+    return transition_matrix[s * 4 + a_x * 2 + a_y][s_]
 
 def next_state(s, a_x, a_y, transition_matrix):
-    prob = transition_matrix[s][a_x * 2 + a_y]
-    if random.random() < prob:
-        s_ = 1 - s
-    else:
-        s_ = s
+    prob = transition_matrix[s * 4 + a_x * 2 + a_y]
+    s_ = np.random.choice([0, 1], p=prob)
     return s_
 
 
