@@ -12,8 +12,8 @@ from multiprocessing import Pool
 pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
 pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
 
-transition_prob = [[0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1],
-                   [0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1]]
+transition_prob = [[0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.8, 0.2],
+                   [0.1, 0.9], [0.1, 0.9], [0.1, 0.9], [0.8, 0.2]]
 
 
 def play_pd_game_1(a_x, a_y):
@@ -84,8 +84,8 @@ class Agent:
 
 
 def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
-    agent_x = Agent(alpha=0.00001, agent_id=0)
-    agent_y = Agent(alpha=0.00001, agent_id=1)
+    agent_x = Agent(alpha=0.00002, agent_id=0)
+    agent_y = Agent(alpha=0.00002, agent_id=1)
     agent_x.initial_strategy()
     agent_y.initial_strategy()
     agent_x.set_strategy(agent_x_init_strategy)

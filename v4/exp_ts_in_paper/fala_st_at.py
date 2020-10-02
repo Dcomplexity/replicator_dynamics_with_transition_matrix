@@ -85,8 +85,8 @@ class Agent:
 
 
 def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
-    agent_x = Agent(alpha=0.00001, agent_id=0)
-    agent_y = Agent(alpha=0.00001, agent_id=1)
+    agent_x = Agent(alpha=0.00002, agent_id=0)
+    agent_y = Agent(alpha=0.00002, agent_id=1)
     agent_x.initial_strategy()
     agent_y.initial_strategy()
     agent_x.set_strategy(agent_x_init_strategy)
@@ -106,35 +106,37 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
             print('fala', _)
         agent_x.record_strategy()
         agent_y.record_strategy()
-        if visited[cur_s] == 0 or visited[1 - cur_s] == 0:
-            if visited[cur_s] == 0:
-                visited[cur_s] = 1
-                a_x = agent_x.choose_action(cur_s)
-                a_y = agent_y.choose_action(cur_s)
-                action_t_x[cur_s] = a_x
-                action_t_y[cur_s] = a_y
-                r_x, r_y = games[cur_s](a_x, a_y)
-                r_sum_x[cur_s] = r_sum_x[cur_s] + r_x
-                r_sum_y[cur_s] = r_sum_y[cur_s] + r_y
-                time_step[cur_s] += 1
-                cur_s = next_state(cur_s, a_x, a_y)
-            else:
-                tau_x[cur_s] = r_sum_x[cur_s] / time_step[cur_s]
-                tau_y[cur_s] = r_sum_y[cur_s] / time_step[cur_s]
-                agent_x.update_strategy(cur_s, action_t_x[cur_s], tau_x[cur_s])
-                agent_y.update_strategy(cur_s, action_t_y[cur_s], tau_y[cur_s])
-                r_sum_x[cur_s] = 0
-                r_sum_y[cur_s] = 0
-                time_step[cur_s] = 0
-                a_x = agent_x.choose_action(cur_s)
-                a_y = agent_y.choose_action(cur_s)
-                action_t_x[cur_s] = a_x
-                action_t_y[cur_s] = a_y
-                r_x, r_y = games[cur_s](a_x, a_y)
-                r_sum_x[cur_s] = r_sum_x[cur_s] + r_x
-                r_sum_y[cur_s] = r_sum_y[cur_s] + r_y
-                time_step[cur_s] += 1
-                cur_s = next_state(cur_s, a_x, a_y)
+        if visited[cur_s] == 0:
+            visited[cur_s] = 1
+            r_sum_x[cur_s] = 0
+            r_sum_y[cur_s] = 0
+            time_step[cur_s] = 0
+            a_x = agent_x.choose_action(cur_s)
+            a_y = agent_y.choose_action(cur_s)
+            action_t_x[cur_s] = a_x
+            action_t_y[cur_s] = a_y
+            r_x, r_y = games[cur_s](a_x, a_y)
+            r_sum_x = r_sum_x + r_x
+            r_sum_y = r_sum_y + r_y
+            time_step = time_step + 1
+            cur_s = next_state(cur_s, a_x, a_y)
+        # else:
+        #     tau_x[cur_s] = r_sum_x[cur_s] / time_step[cur_s]
+        #     tau_y[cur_s] = r_sum_y[cur_s] / time_step[cur_s]
+        #     agent_x.update_strategy(cur_s, action_t_x[cur_s], tau_x[cur_s])
+        #     agent_y.update_strategy(cur_s, action_t_y[cur_s], tau_y[cur_s])
+        #     r_sum_x[cur_s] = 0
+        #     r_sum_y[cur_s] = 0
+        #     time_step[cur_s] = 0
+        #     a_x = agent_x.choose_action(cur_s)
+        #     a_y = agent_y.choose_action(cur_s)
+        #     action_t_x[cur_s] = a_x
+        #     action_t_y[cur_s] = a_y
+        #     r_x, r_y = games[cur_s](a_x, a_y)
+        #     r_sum_x[cur_s] = r_sum_x[cur_s] + r_x
+        #     r_sum_y[cur_s] = r_sum_y[cur_s] + r_y
+        #     time_step[cur_s] += 1
+        #     cur_s = next_state(cur_s, a_x, a_y)
         else:
             tau_x[cur_s] = r_sum_x[cur_s] / time_step[cur_s]
             tau_y[cur_s] = r_sum_y[cur_s] / time_step[cur_s]
