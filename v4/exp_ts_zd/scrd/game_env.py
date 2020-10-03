@@ -10,9 +10,11 @@ import random
 # # pd_game_2 = [[0, 0], [2, -1], [-1, 2], [1, 1]]
 # pd_game_2 = [[0, 0], [b, -c], [-c, b], [b-c, b-c]]
 
+# pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+# pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+
 pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
-pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
-pd_game_3 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+pd_game_2 = [[7, 7], [9, 6], [6, 9], [8, 8]]
 
 # pd_game_1 = [[2, 2], [10, 0], [0, 10], [3, 3]]
 # pd_game_2 = [[1, 1], [10, 0], [0, 10], [4, 4]]
@@ -23,16 +25,13 @@ def play_pd_game_1(a_x, a_y):
 def play_pd_game_2(a_x, a_y):
     return pd_game_2[a_x * 2 + a_y]
 
-def play_pd_game_3(a_x, a_y):
-    return pd_game_3[a_x * 2 + a_y]
-
 
 def transition_prob(s, s_, a_x, a_y, transition_matrix):
     return transition_matrix[s * 4 + a_x * 2 + a_y][s_]
 
 def next_state(s, a_x, a_y, transition_matrix):
     prob = transition_matrix[s * 4 + a_x * 2 + a_y]
-    s_ = np.random.choice([0, 1, 3], p=prob)
+    s_ = np.random.choice([0, 1], p=prob)
     return s_
 
 

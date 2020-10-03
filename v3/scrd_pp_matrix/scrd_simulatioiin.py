@@ -123,15 +123,15 @@ def run_task():
     p_1 = 0.9
     p_2 = 0.1
     transition_matrix = [[p_1, p_1, p_1, p_2], [p_2, p_2, p_2, p_1]]
-    s00 = 0.4
-    s01 = 0.5
-    s10 = 0.7
-    s11 = 0.6
+    s00 = 0.0
+    s01 = 1.0
+    s10 = 0.0
+    s11 = 0.0
     pi = [{0: [1 - s00, s00], 1: [1 - s01, s01]}, {0: [1 - s10, s10], 1: [1 - s11, s11]}]
     s_dist, p_matrix = sad.run(pi, transition_matrix)
     s_pi_dist = spd.gen_s_pi_dist(s_l, a_l, pi, transition_matrix)
-    payoff_1 = calc_payoff(0, 0, a_l, [0, 1], p_matrix, pi)
-    payoff_2 = calc_payoff(0, 0, a_l, pi[0][1], p_matrix, pi)
+    payoff_1 = calc_payoff(0, 1, a_l, pi[0][1], p_matrix, pi)
+    payoff_2 = calc_payoff(1, 0, a_l, pi[1][1], p_matrix, pi)
     print(payoff_1, payoff_2)
 
 if __name__ == '__main__':
