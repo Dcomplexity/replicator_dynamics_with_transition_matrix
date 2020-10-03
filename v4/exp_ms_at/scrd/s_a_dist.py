@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.linalg import solve
 from game_env import *
+import random
 
 
 # This is for the section 3.1 Average reward game
@@ -62,14 +63,14 @@ def gen_payoff_pair(pds, a_l, s, a_x, a_y, pi, s_d):
     :param s_d: state distribution
     :return:
     """
+    s_ap_l = [0, 1, 2]
+    s_ap_l.remove(s)
     p = np.array(pds[s](a_x, a_y)) * s_d[s * 4 + a_x * 2 + a_y][s]
-    for a_x_ in a_l:
-        for a_y_ in a_l:
-            # if a_x_ == a_y_ == 1:
-            #     p += np.array(pds[1 - s](a_x_, a_y_)) * pi[0][1 - s][a_x_] * pi[1][1 - s][a_y_] * \
-            #      s_d[s * 4 + a_x * 2 + a_y][1 - s]
-            p += np.array(pds[1 - s](a_x_, a_y_)) * pi[0][1 - s][a_x_] * pi[1][1 - s][a_y_] * \
-                 s_d[s * 4 + a_x * 2 + a_y][1 - s]
+    for s_ap in s_ap_l:
+        for a_x_ in a_l:
+            for a_y_ in a_l:
+                p += np.array(pds[s_ap](a_x_, a_y_)) * pi[0][s_ap][a_x_] * pi[1][s_ap][a_y_] * \
+                    s_d[s * 4 + a_x * 2 + a_y][s_ap]
     return p
 
 
@@ -95,9 +96,21 @@ if __name__ == "__main__":
     # In the dict, 0 for state 0 and 1 for state 1
     # policy_pi = [{0: [0.3, 0.7], 1: [0.3, 0.7]}, {0: [0.8, 0.2], 1: [0.8, 0.2]}]
     # policy_pi = [{0: [1.0, 0.0], 1: [1.0, 0.0]}, {0: [1.0, 0.0], 1: [1.0, 0.0]}]
-    policy_pi = [{0: [0.0, 1.0], 1: [0.0, 1.0]}, {0: [0.0, 1.0], 1: [0.0, 1.0]}]
+    # policy_pi = [{0: [0.0, 1.0], 1: [0.0, 1.0]}, {0: [0.0, 1.0], 1: [0.0, 1.0]}]
+    s00 = random.random()
+    s01 = random.random()
+    s02 = random.random()
+    s10 = random.random()
+    s11 = random.random()
+    s12 = random.random()
+    policy_pi = [{0: [1 - s00, s00], 1: [1 - s01, s01], 2: [1 - s02, s02]},
+          {0: [1 - s10, s10], 1: [1 - s11, s11], 2: [1 - s12, s12]}]
     # policy_pi = [{0: [0.1, 0.9], 1: [0.1, 0.9]}, {0: [0.1, 0.9], 1: [0.1, 0.9]}]
-    transition_matrix = [[0.1, 0.1, 0.1, 0.9], [0.9, 0.9, 0.9, 0.1]]
+    # transition_matrix = [[0.1, 0.1, 0.1, 0.9], [0.9, 0.9, 0.9, 0.1]]
+    transition_matrix = [[0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.8, 0.1, 0.1],
+                         [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.8, 0.1, 0.1],
+                         [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.8, 0.1, 0.1]]
     state_dist, payoff_matrix = run(policy_pi, transition_matrix)
+    print(len(payoff_matrix))
     print(state_dist)
     print(payoff_matrix)

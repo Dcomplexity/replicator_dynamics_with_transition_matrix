@@ -50,7 +50,7 @@ def calc_payoff(agent_id, s, a_l, mixed_s, p_m, pi):
 
 
 def evolve(strategy, step_size, transition_matrix):
-    s_l = [0, 1]
+    s_l = [0, 1, 2]
     a_l = [0, 1]
     # The initial strategies are set here.
     # s00 for p0, s10 for q0, s01 for p1, s11 for q1, s02 for p2, s12 for q2
@@ -69,16 +69,24 @@ def evolve(strategy, step_size, transition_matrix):
     # agent 0 in state 1
     ds01 = (calc_payoff(0, 1, a_l, [0, 1], p_matrix, pi) - calc_payoff(0, 1, a_l, pi[0][1], p_matrix, pi)) * s01 * \
            s_pi_dist[1]
+    # agent 0 in state 2
+    ds02 = (calc_payoff(0, 2, a_l, [0, 1], p_matrix, pi) - calc_payoff(0, 2, a_l, pi[0][2], p_matrix, pi)) * s02 * \
+           s_pi_dist[2]
     # agent 1 in state 0
     ds10 = (calc_payoff(1, 0, a_l, [0, 1], p_matrix, pi) - calc_payoff(1, 0, a_l, pi[1][0], p_matrix, pi)) * s10 * \
            s_pi_dist[0]
     # agent 1 in state 1
     ds11 = (calc_payoff(1, 1, a_l, [0, 1], p_matrix, pi) - calc_payoff(1, 1, a_l, pi[1][1], p_matrix, pi)) * s11 * \
            s_pi_dist[1]
+    # agent 2 in state 2
+    ds12 = (calc_payoff(1, 2, a_l, [0, 1], p_matrix, pi) - calc_payoff(1, 2, a_l, pi[1][2], p_matrix, pi)) * s12 * \
+           s_pi_dist[2]
     s00 = valid_s(s00 + ds00 * step_size)
     s01 = valid_s(s01 + ds01 * step_size)
+    s02 = valid_s(s02 + ds02 * step_size)
     s10 = valid_s(s10 + ds10 * step_size)
     s11 = valid_s(s11 + ds11 * step_size)
+    s12 = valid_s(s12 + ds12 * step_size)
     return [s00, s10, s01, s11, s02, s12]
 
 
