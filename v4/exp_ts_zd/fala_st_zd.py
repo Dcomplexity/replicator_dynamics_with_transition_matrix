@@ -14,8 +14,8 @@ from multiprocessing import Pool
 pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
 pd_game_2 = [[7, 7], [9, 6], [6, 9], [8, 8]]
 
-transition_matrix = [[0.4, 0.6], [0.8, 0.2], [0.2, 0.8], [0.6, 0.4],
-                     [0.4, 0.6], [0.2, 0.8], [0.8, 0.2], [0.6, 0.4]]
+transition_prob = [[0.4, 0.6], [0.8, 0.2], [0.2, 0.8], [0.6, 0.4],
+                    [0.4, 0.6], [0.2, 0.8], [0.8, 0.2], [0.6, 0.4]]
 
 
 def play_pd_game_1(a_x, a_y):
@@ -187,12 +187,13 @@ def read_s_init():
 
 
 if __name__ == '__main__':
-    p_fala = Pool()
     s_init_list = read_s_init()
+    p_fala = Pool()
     init_num = len(s_init_list)
     for _ in range(init_num):
         s_init = s_init_list[_][:]
         p_fala.apply_async(run_task_fala, args=(s_init,))
     p_fala.close()
     p_fala.join()
+    run_task_fala(s_init_list[0])
     print("All subprocesses done")
