@@ -92,7 +92,7 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
         v = null_space(null_matrix)
         v = v / np.sum(v)
         action_payoff = np.dot(f_p, v)[0][0]
-        return action_payoff
+        return v, action_payoff
     elif agent_id == 1:
         pa = pl[:]
         qa = ql[:]
@@ -103,37 +103,37 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
         v = null_space(null_matrix)
         v = v / np.sum(v)
         action_payoff = np.dot(f_q, v)[0][0]
-        return action_payoff
+        return v, action_payoff
 
 
-def calc_payoff_sp(agent_id, s, qvec, pl, ql, f_p, f_q):
-    if agent_id == 0:
-        m_cc = build_markov_chain(qvec, [1, pl[1]], [1, ql[1]])
-        m_cd = build_markov_chain(qvec, [1, pl[1]], [0, ql[1]])
-        m_dc = build_markov_chain(qvec, [0, pl[1]], [1, ql[1]])
-        m_dd = build_markov_chain(qvec, [0, pl[1]], [0, ql[1]])
-        m_c = m_cc * ql[0] + m_cd * (1 - ql[0])
-        m_d = m_dc * ql[0] + m_dd * (1 - ql[0])
-        m = pl[0] * m_c + (1 - pl[0]) * m_d
-        null_matrix = np.transpose(m) - np.eye(8)
-        v = null_space(null_matrix)
-        v = v / np.sum(v)
-        action_payoff = np.dot(f_p, v)[0][0]
-        return action_payoff
-
-
-def calc_payoff_sp_c(agent_id, s, qvec, pl, ql, f_p, f_q):
-    if agent_id == 0:
-        m_cc = build_markov_chain(qvec, [1, pl[1]], [1, ql[1]])
-        m_cd = build_markov_chain(qvec, [1, pl[1]], [0, ql[1]])
-        m_dc = build_markov_chain(qvec, [0, pl[1]], [1, ql[1]])
-        m_dd = build_markov_chain(qvec, [0, pl[1]], [0, ql[1]])
-        m_c = m_cc * ql[0] + m_cd * (1 - ql[0])
-        null_matrix = np.transpose(m_c) - np.eye(8)
-        v = null_space(null_matrix)
-        v = v / np.sum(v)
-        action_payoff = np.dot(f_p, v)[0][0]
-        return action_payoff
+# def calc_payoff_sp(agent_id, s, qvec, pl, ql, f_p, f_q):
+#     if agent_id == 0:
+#         m_cc = build_markov_chain(qvec, [1, pl[1]], [1, ql[1]])
+#         m_cd = build_markov_chain(qvec, [1, pl[1]], [0, ql[1]])
+#         m_dc = build_markov_chain(qvec, [0, pl[1]], [1, ql[1]])
+#         m_dd = build_markov_chain(qvec, [0, pl[1]], [0, ql[1]])
+#         m_c = m_cc * ql[0] + m_cd * (1 - ql[0])
+#         m_d = m_dc * ql[0] + m_dd * (1 - ql[0])
+#         m = pl[0] * m_c + (1 - pl[0]) * m_d
+#         null_matrix = np.transpose(m) - np.eye(8)
+#         v = null_space(null_matrix)
+#         v = v / np.sum(v)
+#         action_payoff = np.dot(f_p, v)[0][0]
+#         return action_payoff
+#
+#
+# def calc_payoff_sp_c(agent_id, s, qvec, pl, ql, f_p, f_q):
+#     if agent_id == 0:
+#         m_cc = build_markov_chain(qvec, [1, pl[1]], [1, ql[1]])
+#         m_cd = build_markov_chain(qvec, [1, pl[1]], [0, ql[1]])
+#         m_dc = build_markov_chain(qvec, [0, pl[1]], [1, ql[1]])
+#         m_dd = build_markov_chain(qvec, [0, pl[1]], [0, ql[1]])
+#         m_c = m_cc * ql[0] + m_cd * (1 - ql[0])
+#         null_matrix = np.transpose(m_c) - np.eye(8)
+#         v = null_space(null_matrix)
+#         v = v / np.sum(v)
+#         action_payoff = np.dot(f_p, v)[0][0]
+#         return action_payoff
 
 
 
@@ -256,22 +256,22 @@ def run_task_rd(s_init):
             # calc_expected_payoff(qvec, pl, ql, f_p, f_q)
             v, r_p_e, r_q_e = calc_expected_payoff(qmatrix, pl, ql, f_p, f_q)
             # calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q)
-            r_p_0_cc = calc_payoff(0, 0, 1, 1, qmatrix, pl, ql, f_p, f_q)
-            r_q_0_cc = calc_payoff(1, 0, 1, 1, qmatrix, pl, ql, f_p, f_q)
-            r_p_0_cd = calc_payoff(0, 0, 1, 0, qmatrix, pl, ql, f_p, f_q)
-            r_q_0_cd = calc_payoff(1, 0, 1, 0, qmatrix, pl, ql, f_p, f_q)
-            r_p_0_dc = calc_payoff(0, 0, 0, 1, qmatrix, pl, ql, f_p, f_q)
-            r_q_0_dc = calc_payoff(1, 0, 0, 1, qmatrix, pl, ql, f_p, f_q)
-            r_p_0_dd = calc_payoff(0, 0, 0, 0, qmatrix, pl, ql, f_p, f_q)
-            r_q_0_dd = calc_payoff(1, 0, 0, 0, qmatrix, pl, ql, f_p, f_q)
-            r_p_1_cc = calc_payoff(0, 1, 1, 1, qmatrix, pl, ql, f_p, f_q)
-            r_q_1_cc = calc_payoff(1, 1, 1, 1, qmatrix, pl, ql, f_p, f_q)
-            r_p_1_cd = calc_payoff(0, 1, 1, 0, qmatrix, pl, ql, f_p, f_q)
-            r_q_1_cd = calc_payoff(1, 1, 1, 0, qmatrix, pl, ql, f_p, f_q)
-            r_p_1_dc = calc_payoff(0, 1, 0, 1, qmatrix, pl, ql, f_p, f_q)
-            r_q_1_dc = calc_payoff(1, 1, 0, 1, qmatrix, pl, ql, f_p, f_q)
-            r_p_1_dd = calc_payoff(0, 1, 0, 0, qmatrix, pl, ql, f_p, f_q)
-            r_q_1_dd = calc_payoff(1, 1, 0, 0, qmatrix, pl, ql, f_p, f_q)
+            v_p_0_cc, r_p_0_cc = calc_payoff(0, 0, 1, 1, qmatrix, pl, ql, f_p, f_q)
+            v_q_0_cc, r_q_0_cc = calc_payoff(1, 0, 1, 1, qmatrix, pl, ql, f_p, f_q)
+            v_p_0_cd, r_p_0_cd = calc_payoff(0, 0, 1, 0, qmatrix, pl, ql, f_p, f_q)
+            v_q_0_cd, r_q_0_cd = calc_payoff(1, 0, 1, 0, qmatrix, pl, ql, f_p, f_q)
+            v_p_0_dc, r_p_0_dc = calc_payoff(0, 0, 0, 1, qmatrix, pl, ql, f_p, f_q)
+            v_q_0_dc, r_q_0_dc = calc_payoff(1, 0, 0, 1, qmatrix, pl, ql, f_p, f_q)
+            v_p_0_dd, r_p_0_dd = calc_payoff(0, 0, 0, 0, qmatrix, pl, ql, f_p, f_q)
+            v_q_0_dd, r_q_0_dd = calc_payoff(1, 0, 0, 0, qmatrix, pl, ql, f_p, f_q)
+            v_p_1_cc, r_p_1_cc = calc_payoff(0, 1, 1, 1, qmatrix, pl, ql, f_p, f_q)
+            v_q_1_cc, r_q_1_cc = calc_payoff(1, 1, 1, 1, qmatrix, pl, ql, f_p, f_q)
+            v_p_1_cd, r_p_1_cd = calc_payoff(0, 1, 1, 0, qmatrix, pl, ql, f_p, f_q)
+            v_q_1_cd, r_q_1_cd = calc_payoff(1, 1, 1, 0, qmatrix, pl, ql, f_p, f_q)
+            v_p_1_dc, r_p_1_dc = calc_payoff(0, 1, 0, 1, qmatrix, pl, ql, f_p, f_q)
+            v_q_1_dc, r_q_1_dc = calc_payoff(1, 1, 0, 1, qmatrix, pl, ql, f_p, f_q)
+            v_p_1_dd, r_p_1_dd = calc_payoff(0, 1, 0, 0, qmatrix, pl, ql, f_p, f_q)
+            v_q_1_dd, r_q_1_dd = calc_payoff(1, 1, 0, 0, qmatrix, pl, ql, f_p, f_q)
             v_0 = np.sum(v[0:4])
             v_1 = np.sum(v[4:8])
             f_p_exp = np.array([r_p_0_cc, r_p_0_cd, r_p_0_dc, r_p_0_dd, r_p_1_cc, r_p_1_cd, r_p_1_dc, r_p_1_dd])
@@ -286,28 +286,29 @@ def run_task_rd(s_init):
             #         r_p_1_dc * q1 + r_p_1_dd * (1 - q1)))) * p1 * v_1
             # dq1 = ((r_q_1_cc * p1 + r_q_1_dc * (1 - p1)) - (q1 * (r_q_1_cc * p1 + r_q_1_dc * (1 - p1)) + (1 - q1) * (
             #         r_q_1_cd * p1 + r_q_1_dd * (1 - p1)))) * q1 * v_1
-            p_0_c = r_p_0_cc * q0 + r_p_0_cd * (1 - q0)
-            p_0_c_sp = calc_payoff_sp_c(0, 0, qmatrix, pl, ql, f_p, f_q)
-            p_0 = p0 * (r_p_0_cc * q0 + r_p_0_cd * (1 - q0)) + (1 - p0) * (r_p_0_dc * q0 + r_p_0_dd * (1 - q0))
-            p_0_sp = calc_payoff_sp(0, 0, qmatrix, pl, ql, f_p, f_q)
-            print(p_0_c - p_0, p_0_c_sp - p_0_sp)
-            dp0 = (calc_payoff(0, 0, 1, q0, qmatrix0, pl, ql, f_p_exp, f_q_exp) - calc_payoff(0, 0, p0, q0, qmatrix0,
+            # p_0_c = r_p_0_cc * q0 + r_p_0_cd * (1 - q0)
+            # p_0_c_sp = calc_payoff_sp_c(0, 0, qmatrix, pl, ql, f_p, f_q)
+            # p_0 = p0 * (r_p_0_cc * q0 + r_p_0_cd * (1 - q0)) + (1 - p0) * (r_p_0_dc * q0 + r_p_0_dd * (1 - q0))
+            # p_0_sp = calc_payoff_sp(0, 0, qmatrix, pl, ql, f_p, f_q)
+            # print(p_0_c - p_0, p_0_c_sp - p_0_sp)
+            print(v_p_0_cc)
+            dp0 = (calc_payoff(0, 0, 1, q0, qmatrix0, pl, ql, f_p_exp, f_q_exp)[1] - calc_payoff(0, 0, p0, q0, qmatrix0,
                                                                                               pl, ql,
                                                                                               f_p_exp,
-                                                                                              f_q_exp)) * p0 * v_0
+                                                                                              f_q_exp)[1]) * p0 * v_0
             print(dp0)
-            dq0 = (calc_payoff(1, 0, p0, 1, qmatrix0, pl, ql, f_p_exp, f_q_exp) - calc_payoff(1, 0, p0, q0, qmatrix0,
+            dq0 = (calc_payoff(1, 0, p0, 1, qmatrix0, pl, ql, f_p_exp, f_q_exp)[1] - calc_payoff(1, 0, p0, q0, qmatrix0,
                                                                                               pl, ql,
                                                                                               f_p_exp,
-                                                                                              f_q_exp)) * q0 * v_0
-            dp1 = (calc_payoff(0, 1, 1, q1, qmatrix1, pl, ql, f_p_exp, f_q_exp) - calc_payoff(0, 1, p1, q1, qmatrix1,
+                                                                                              f_q_exp)[1]) * q0 * v_0
+            dp1 = (calc_payoff(0, 1, 1, q1, qmatrix1, pl, ql, f_p_exp, f_q_exp)[1] - calc_payoff(0, 1, p1, q1, qmatrix1,
                                                                                               pl, ql,
                                                                                               f_p_exp,
-                                                                                              f_q_exp)) * p1 * v_1
-            dq1 = (calc_payoff(1, 1, p1, 1, qmatrix1, pl, ql, f_p_exp, f_q_exp) - calc_payoff(1, 1, p1, q1, qmatrix1,
+                                                                                              f_q_exp)[1]) * p1 * v_1
+            dq1 = (calc_payoff(1, 1, p1, 1, qmatrix1, pl, ql, f_p_exp, f_q_exp)[1] - calc_payoff(1, 1, p1, q1, qmatrix1,
                                                                                               pl, ql,
                                                                                               f_p_exp,
-                                                                                              f_q_exp)) * q1 * v_1
+                                                                                              f_q_exp)[1]) * q1 * v_1
             p0 = p0 + dp0 * step_size
             q0 = q0 + dq0 * step_size
             p1 = p1 + dp1 * step_size
