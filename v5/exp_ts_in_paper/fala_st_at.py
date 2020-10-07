@@ -101,11 +101,13 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
     action_t_y = np.array([0, 0])
     time_step = np.array([0, 0])  # store the sum of time since last time meeting each state: state 0 and state 1
     visited = [0, 0]
+    p = []
     for _ in range(int(2 * 10e6)):
         if _ % 10000 == 0:
             print('fala', _)
-        agent_x.record_strategy()
-        agent_y.record_strategy()
+        # agent_x.record_strategy()
+        # agent_y.record_strategy()
+        p.append([agent_x.strategy[0][1], agent_y.strategy[0][1], agent_x.strategy[1][1], agent_y.strategy[1][1]])
         if visited[cur_s] == 0:
             visited[cur_s] = 1
             r_sum_x[cur_s] = 0
@@ -120,23 +122,6 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
             r_sum_y = r_sum_y + r_y
             time_step = time_step + 1
             cur_s = next_state(cur_s, a_x, a_y)
-        # else:
-        #     tau_x[cur_s] = r_sum_x[cur_s] / time_step[cur_s]
-        #     tau_y[cur_s] = r_sum_y[cur_s] / time_step[cur_s]
-        #     agent_x.update_strategy(cur_s, action_t_x[cur_s], tau_x[cur_s])
-        #     agent_y.update_strategy(cur_s, action_t_y[cur_s], tau_y[cur_s])
-        #     r_sum_x[cur_s] = 0
-        #     r_sum_y[cur_s] = 0
-        #     time_step[cur_s] = 0
-        #     a_x = agent_x.choose_action(cur_s)
-        #     a_y = agent_y.choose_action(cur_s)
-        #     action_t_x[cur_s] = a_x
-        #     action_t_y[cur_s] = a_y
-        #     r_x, r_y = games[cur_s](a_x, a_y)
-        #     r_sum_x[cur_s] = r_sum_x[cur_s] + r_x
-        #     r_sum_y[cur_s] = r_sum_y[cur_s] + r_y
-        #     time_step[cur_s] += 1
-        #     cur_s = next_state(cur_s, a_x, a_y)
         else:
             tau_x[cur_s] = r_sum_x[cur_s] / time_step[cur_s]
             tau_y[cur_s] = r_sum_y[cur_s] / time_step[cur_s]
@@ -155,19 +140,19 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
             time_step = time_step + 1
             cur_s = next_state(cur_s, a_x, a_y)
 
-    p = []
-    for i in range(len(agent_x.strategy_trace)):
-        p.append([agent_x.strategy_trace[i][0][1], agent_y.strategy_trace[i][0][1], agent_x.strategy_trace[i][1][1],
-                  agent_y.strategy_trace[i][1][1]])
-    return p, agent_x.strategy_trace, agent_y.strategy_trace
-
+    # p = []
+    # for i in range(len(agent_x.strategy_trace)):
+    #     p.append([agent_x.strategy_trace[i][0][1], agent_y.strategy_trace[i][0][1], agent_x.strategy_trace[i][1][1],
+    #               agent_y.strategy_trace[i][1][1]])
+    # return p, agent_x.strategy_trace, agent_y.strategy_trace
+    return p
 
 def run_task_fala(s_init):
     p0 = s_init[0]
     q0 = s_init[1]
     p1 = s_init[2]
     q1 = s_init[3]
-    p, x_st, y_st = run_game_fala(agent_x_init_strategy=[[1 - p0, p0], [1 - p1, p1]],
+    p = run_game_fala(agent_x_init_strategy=[[1 - p0, p0], [1 - p1, p1]],
                                   agent_y_init_strategy=[[1 - q0, q0], [1 - q1, q1]], s_0=0)
     abs_path = os.path.abspath(os.path.join(os.getcwd(), "results_st_in_paper"))
     csv_file_name = "/fala_ts_st_at_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (p0, q0, p1, q1)
