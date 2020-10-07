@@ -113,6 +113,8 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
             print('fala', _)
         # agent_x.record_strategy()
         # agent_y.record_strategy()
+        p.append([agent_x.strategy[-1][1], agent_y.strategy[0][1], agent_x.strategy[1][1], agent_y.strategy[1][1],
+                  agent_x.strategy[1][1], agent_y.strategy[2][1]])
         if visited[cur_s] == 0:
             visited[cur_s] = 1
             r_sum_x[cur_s] = 0
@@ -144,8 +146,7 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
             r_sum_y = r_sum_y + r_y
             time_step = time_step + 1
             cur_s = next_state(cur_s, a_x, a_y)
-        p.append([agent_x.strategy[0][1], agent_y.strategy[0][1], agent_x.strategy[1][1], agent_y.strategy[1][1],
-                  agent_x.strategy[2][1], agent_y.strategy[2][1]])
+
     # p = []
     # for i in range(len(agent_x.strategy_trace)):
     #     p.append([agent_x.strategy_trace[i][0][1], agent_y.strategy_trace[i][0][1], agent_x.strategy_trace[i][1][1],
