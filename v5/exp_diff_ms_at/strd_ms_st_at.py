@@ -31,7 +31,6 @@ def build_markov_chain(qvec, p, q):
                 m[i][j] = qvec[i][j // 4] * (1 - p[j // 4]) * q[j // 4]
             else:
                 m[i][j] = qvec[i][j // 4] * (1 - p[j // 4]) * (1 - q[j // 4])
-    print(m)
     return m
 
 
