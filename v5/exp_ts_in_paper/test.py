@@ -25,7 +25,6 @@ def build_markov_chain(qvec, p, q):
         for j in range(np.size(m, axis=1)):
             if j % 4 == 0:
                 m[i][j] = qvec[i][j // 4] * p[j // 4] * q[j // 4]
-                # f_p = np.array([r, s, t, p, r, s, t, p])
             elif j % 4 == 1:
                 m[i][j] = qvec[i][j // 4] * p[j // 4] * (1 - q[j // 4])
             elif j % 4 == 2:
@@ -84,17 +83,15 @@ def run_task_rd(s_init):
         p1 = s_init[2]
         q1 = s_init[3]
         print(z_1, z_2)
-        qmatrix = [[0.6, 0.4], [0.2, 0.8], [0.8, 0.2], [0.4, 0.6],
-                   [0.6, 0.4], [0.2, 0.8], [0.8, 0.2], [0.4, 0.6]]
-        # qmatrix0 = [[1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0],
-        #             [1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0]]
-        # qmatrix1 = [[0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0],
-        #             [0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]
-        # f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
-        f_p = np.array([3, 1, 4, 2, 8, 6, 9, 7])
+        qmatrix = [[0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.9, 0.1],
+                   [0.1, 0.9], [0.9, 0.1], [0.9, 0.1], [0.1, 0.9]]
+        qmatrix0 = [[1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0],
+                    [1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0]]
+        qmatrix1 = [[0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0],
+                    [0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]
+        f_p = np.array([3, 0, 10, 2, 4, 0, 10, 1])
         f_p = f_p.reshape(f_p.size, 1).transpose()
-        f_q = np.array([3, 4, 1, 2, 8, 9, 6, 7])
-        # f_q = np.array([3, 4, 1, 2, 7, 8, 5, 6])
+        f_q = np.array([3, 10, 0, 2, 4, 10, 0, 1])
         f_q = f_q.reshape(f_q.size, 1).transpose()
         d = []
         d.append([p0, q0, p1, q1])
@@ -103,11 +100,7 @@ def run_task_rd(s_init):
                 print('strd', _)
             pl = [p0, p1]
             ql = [q0, q1]
-            # pl = [p0, p0, p0, p0, p1, p1, p1, p1]
-            # ql = [q0, q0, q0, q0, q1, q1, q1, q1]
-            # calc_expected_payoff(qvec, pl, ql, f_p, f_q)
             v, r_p_e, r_q_e = calc_expected_payoff(qmatrix, pl, ql, f_p, f_q)
-            # calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q)
             r_p_0_cc = calc_payoff(0, 0, 1, 1, qmatrix, pl, ql, f_p, f_q)
             r_q_0_cc = calc_payoff(1, 0, 1, 1, qmatrix, pl, ql, f_p, f_q)
             r_p_0_cd = calc_payoff(0, 0, 1, 0, qmatrix, pl, ql, f_p, f_q)
@@ -138,6 +131,18 @@ def run_task_rd(s_init):
                     r_p_1_dc * q1 + r_p_1_dd * (1 - q1)))) * p1 * v_1
             dq1 = ((r_q_1_cc * p1 + r_q_1_dc * (1 - p1)) - (q1 * (r_q_1_cc * p1 + r_q_1_dc * (1 - p1)) + (1 - q1) * (
                     r_q_1_cd * p1 + r_q_1_dd * (1 - p1)))) * q1 * v_1
+            # v_avg = [p0 * q0, p0 * (1 - q0), (1 - p0) * q0, (1 - p0) * (1 - q0), p1 * q1, p1 * (1 - q1), (1 - p1) * q1,
+            #          (1 - p1) * (1 - q1)]
+            # v_p0 = [1 * q0, 1 * (1 - q0), (1 - 1) * q0, (1 - 1) * (1 - q0), p1 * q1, p1 * (1 - q1), (1 - p1) * q1,
+            #          (1 - p1) * (1 - q1)]
+            # v_q0 = [p0 * 1, p0 * (1 - 1), (1 - p0) * 1, (1 - p0) * (1 - 1), p1 * q1, p1 * (1 - q1), (1 - p1) * q1,
+            #          (1 - p1) * (1 - q1)]
+            # v_p1 = [p0 * q0, p0 * (1 - q0), (1 - p0) * q0, (1 - p0) * (1 - q0), 1 * q1, 1 * (1 - q1), (1 - 1) * q1,
+            #          (1 - 1) * (1 - q1)]
+            # v_q1 = [p0 * q0, p0 * (1 - q0), (1 - p0) * q0, (1 - p0) * (1 - q0), p1 * 1, p1 * (1 - 1), 1 * (1 - p1),
+            #          (1 - p1) * (1 - 1)]
+            # r_p_avg = np.dot(v_avg, f_p_exp)
+            # r_q_avg = np.dot(v_avg, f_q_exp)
             # dp0 = (calc_payoff(0, 0, 1, q0, qmatrix0, pl, ql, f_p_exp, f_q_exp) - calc_payoff(0, 0, p0, q0, qmatrix0,
             #                                                                                   pl, ql,
             #                                                                                   f_p_exp,
@@ -154,14 +159,18 @@ def run_task_rd(s_init):
             #                                                                                   pl, ql,
             #                                                                                   f_p_exp,
             #                                                                                   f_q_exp)) * q1 * v_1
+            # dp0 = (np.dot(v_p0, f_p_exp) - r_p_avg) * p0 * v_0
+            # dq0 = (np.dot(v_q0, f_q_exp) - r_q_avg) * q0 * v_0
+            # dp1 = (np.dot(v_p1, f_p_exp) - r_p_avg) * p1 * v_1
+            # dq1 = (np.dot(v_q1, f_q_exp) - r_q_avg)
             p0 = p0 + dp0 * step_size
             q0 = q0 + dq0 * step_size
             p1 = p1 + dp1 * step_size
             q1 = q1 + dq1 * step_size
             d.append([p0, q0, p1, q1])
-        abs_path = os.path.abspath(os.path.join(os.getcwd(), "./results_st_zd"))
+        abs_path = os.path.abspath(os.path.join(os.getcwd(), "results_st_in_paper"))
         csv_file_name = "/strd_ts_st_at_%.2f_%.2f_%.2f_%.2f_strategy_trace.csv" % (
-        s_init[0], s_init[1], s_init[2], s_init[3])
+            s_init[0], s_init[1], s_init[2], s_init[3])
         file_name = abs_path + csv_file_name
         d_pd = pd.DataFrame(d)
         d_pd.to_csv(file_name, index=None)
