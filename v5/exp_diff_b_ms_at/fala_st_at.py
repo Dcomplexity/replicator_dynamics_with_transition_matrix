@@ -10,9 +10,12 @@ from scipy.linalg import null_space
 from multiprocessing import Pool
 
 # pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
-pd_game_1 = [[6, 6], [8, 5], [5, 8], [7, 7]]
-pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
-pd_game_3 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+# pd_game_1 = [[6, 6], [8, 5], [5, 8], [7, 7]]
+# pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+# pd_game_3 = [[2, 2], [4, 1], [1, 4], [3, 3]]
+pd_game_1 = [[0, 0], [2.0, -1], [-1, 2.0], [1.0, 1.0]]
+pd_game_2 = [[0, 0], [1.2, -1], [-1, 1.2], [0.2, 0.2]]
+pd_game_3 = [[0, 0], [1.2, -1], [-1, 1.2], [0.2, 0.2]]
 
 transition_prob = [[0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.9, 0.05, 0.05],
                    [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.9, 0.05, 0.05],
@@ -109,7 +112,7 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
     time_step = np.array([0, 0, 0])  # store the sum of time since last time meeting each state: state 0, state 1, state 2
     visited = [0, 0, 0]
     p = []
-    for _ in range(int(3 * 10e6)):
+    for _ in range(int(10e6)):
         if _ % 10000 == 0:
             print('fala', _)
         # agent_x.record_strategy()
