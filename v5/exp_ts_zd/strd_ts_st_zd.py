@@ -19,10 +19,14 @@ from multiprocessing import Pool
 #     return s_new
 
 
+# 根据个体的策略和博弈状态间的转移概率来构建马尔可夫链的转移矩阵
+# qvec 是博弈状态转移概率，p 和 q 分别是两个个体的策略。
 def build_markov_chain(qvec, p, q):
-    m = np.ones((8, 8))
+    m = np.ones((8, 8))  # 马尔可夫链中一共有 8 个状态，所以状态转移矩阵的维数是 8 * 8
     for i in range(np.size(m, axis=0)):
         for j in range(np.size(m, axis=1)):
+            # j 对应了每一列的序号，分别为
+            # ((s_1, cc), (s_1, cd), (s_1, dc), (s_1, dd), (s_2, cc), (s_2, cd), (s_2, dc), (s_2, dd))
             if j % 4 == 0:
                 m[i][j] = qvec[i][j // 4] * p[j // 4] * q[j // 4]
                 # f_p = np.array([r, s, t, p, r, s, t, p])
@@ -35,6 +39,7 @@ def build_markov_chain(qvec, p, q):
     return m
 
 
+# 计算个体策略给各自带来的期望收益，以及在每一个状态的分布
 def calc_expected_payoff(qvec, pl, ql, f_p, f_q):
     pa = pl[:]
     qa = ql[:]
@@ -47,6 +52,8 @@ def calc_expected_payoff(qvec, pl, ql, f_p, f_q):
     return v, r_p_e, r_q_e
 
 
+# 计算针对每一个动作（看成是一个纯策略）来计算期望收益
+# a_p 和 a_q 是个体 P 和 Q 采取的动作
 def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
     action_payoff = 0
     if agent_id == 0:
@@ -79,17 +86,22 @@ def run_task_rd(s_init):
     s_n = 2
     print(s_init)
     for z_1, z_2 in [[0.9, 0.1]]:
+        # 读取每个个体的初始策略，并将其赋值给每个个体
+        # p0, q0 是个体 P 和 Q 在 s^1 的合作概率
+        # p1, q1 是个体 P 和 Q 在 s^2 的合作概率
         p0 = s_init[0]
         q0 = s_init[1]
         p1 = s_init[2]
         q1 = s_init[3]
         print(z_1, z_2)
+        # qmatrix 是博弈状态转移概率，每个元素的第一项为对下一步到状态 s^1 的概率
         qmatrix = [[0.6, 0.4], [0.2, 0.8], [0.8, 0.2], [0.4, 0.6],
                    [0.6, 0.4], [0.2, 0.8], [0.8, 0.2], [0.4, 0.6]]
         # qmatrix0 = [[1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0],
         #             [1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0]]
         # qmatrix1 = [[0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0],
         #             [0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]
+        # f_p, f_q 分别为两个个体收益向量
         # f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
         f_p = np.array([3, 1, 4, 2, 8, 6, 9, 7])
         f_p = f_p.reshape(f_p.size, 1).transpose()
@@ -107,6 +119,7 @@ def run_task_rd(s_init):
             # ql = [q0, q0, q0, q0, q1, q1, q1, q1]
             # calc_expected_payoff(qvec, pl, ql, f_p, f_q)
             v, r_p_e, r_q_e = calc_expected_payoff(qmatrix, pl, ql, f_p, f_q)
+            # 针对每一种动作组合，都计算出它的期望收益
             # calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q)
             r_p_0_cc = calc_payoff(0, 0, 1, 1, qmatrix, pl, ql, f_p, f_q)
             r_q_0_cc = calc_payoff(1, 0, 1, 1, qmatrix, pl, ql, f_p, f_q)
@@ -124,12 +137,14 @@ def run_task_rd(s_init):
             r_q_1_dc = calc_payoff(1, 1, 0, 1, qmatrix, pl, ql, f_p, f_q)
             r_p_1_dd = calc_payoff(0, 1, 0, 0, qmatrix, pl, ql, f_p, f_q)
             r_q_1_dd = calc_payoff(1, 1, 0, 0, qmatrix, pl, ql, f_p, f_q)
+            # 到达状态 s^1 和 s^2 的概率
             v_0 = np.sum(v[0:4])
             v_1 = np.sum(v[4:8])
             # f_p_exp = np.array([r_p_0_cc, r_p_0_cd, r_p_0_dc, r_p_0_dd, r_p_1_cc, r_p_1_cd, r_p_1_dc, r_p_1_dd])
             # f_p_exp = f_p_exp.reshape(f_p_exp.size, 1).transpose()
             # f_q_exp = np.array([r_q_0_cc, r_q_0_cd, r_q_0_dc, r_q_0_dd, r_q_1_cc, r_q_1_cd, r_q_1_dc, r_q_1_dd])
             # f_q_exp = f_q_exp.reshape(f_q_exp.size, 1).transpose()
+            # 每一个动作更新的梯度
             dp0 = ((r_p_0_cc * q0 + r_p_0_cd * (1 - q0)) - (p0 * (r_p_0_cc * q0 + r_p_0_cd * (1 - q0)) + (1 - p0) * (
                     r_p_0_dc * q0 + r_p_0_dd * (1 - q0)))) * p0 * v_0
             dq0 = ((r_q_0_cc * p0 + r_q_0_dc * (1 - p0)) - (q0 * (r_q_0_cc * p0 + r_q_0_dc * (1 - p0)) + (1 - q0) * (
