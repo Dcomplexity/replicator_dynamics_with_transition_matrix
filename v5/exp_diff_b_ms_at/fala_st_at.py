@@ -112,7 +112,7 @@ def run_game_fala(agent_x_init_strategy, agent_y_init_strategy, s_0):
     time_step = np.array([0, 0, 0])  # store the sum of time since last time meeting each state: state 0, state 1, state 2
     visited = [0, 0, 0]
     p = []
-    for _ in range(int(10e6)):
+    for _ in range(int(10e5)):
         if _ % 10000 == 0:
             print('fala', _)
         # agent_x.record_strategy()

@@ -10,7 +10,7 @@ from scipy.linalg import null_space
 from multiprocessing import Pool
 
 # pd_game_1 = [[2, 2], [4, 1], [1, 4], [3, 3]]
-pd_game_1 = [[6, 6], [8, 5], [5, 8], [7, 7]]
+pd_game_1 = [[4, 4], [8, 2], [2, 8], [6, 6]]
 pd_game_2 = [[2, 2], [4, 1], [1, 4], [3, 3]]
 pd_game_3 = [[2, 2], [4, 1], [1, 4], [3, 3]]
 
