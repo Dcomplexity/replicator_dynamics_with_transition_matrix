@@ -20,7 +20,7 @@ from multiprocessing import Pool
 
 
 def build_markov_chain(qvec, p, q):
-    m = np.ones((12, 12))
+    m = np.ones((8, 8))
     for i in range(np.size(m, axis=0)):
         for j in range(np.size(m, axis=1)):
             if j % 4 == 0:
@@ -39,7 +39,7 @@ def calc_expected_payoff(qvec, pl, ql, f_p, f_q):
     qa = ql[:]
     m = build_markov_chain(qvec, pa, qa)
     # print(m)
-    null_matrix = np.transpose(m) - np.eye(12)
+    null_matrix = np.transpose(m) - np.eye(8)
     v = null_space(null_matrix)
     v = v / np.sum(v)
     # print(v)
@@ -56,7 +56,7 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
         pa[s] = a_p
         qa[s] = a_q
         m = build_markov_chain(qvec, pa, qa)
-        null_matrix = np.transpose(m) - np.eye(12)
+        null_matrix = np.transpose(m) - np.eye(8)
         v = null_space(null_matrix)
         v = v / np.sum(v)
         action_payoff = np.dot(f_p, v)[0][0]
@@ -67,7 +67,7 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
         pa[s] = a_p
         qa[s] = a_q
         m = build_markov_chain(qvec, pa, qa)
-        null_matrix = np.transpose(m) - np.eye(12)
+        null_matrix = np.transpose(m) - np.eye(8)
         v = null_space(null_matrix)
         v = v / np.sum(v)
         action_payoff = np.dot(f_q, v)[0][0]
@@ -210,36 +210,25 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
 #     return s_init
 
 def run_payoff_matrix_task():
-    qmatrix = [[0.9, 0.05, 0.05], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45],
-               [0.9, 0.05, 0.05], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45],
-               [0.9, 0.05, 0.05], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45], [0.1, 0.45, 0.45]]
-    # qmatrix = [[0.45, 0.45, 0.1], [0.05, 0.05, 0.9], [0.05, 0.05, 0.9], [0.05, 0.05, 0.9],
-    #            [0.45, 0.45, 0.1], [0.05, 0.05, 0.9], [0.05, 0.05, 0.9], [0.05, 0.05, 0.9],
-    #            [0.45, 0.45, 0.1], [0.05, 0.05, 0.9], [0.05, 0.05, 0.9], [0.05, 0.05, 0.9]]
-    # f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4, 2])
-    f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4, 2])
-    # f_p = np.array([8, 6, 9, 2, 3, 1, 4, 2, 3, 1, 4, 2])
+    qmatrix = [[0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.1, 0.9],
+               [0.9, 0.1], [0.1, 0.9], [0.1, 0.9], [0.1, 0.9]]
+    f_p = np.array([3, 1, 4, 2, 3, 1, 4, 2])
     f_p = f_p.reshape(f_p.size, 1).transpose()
-    # f_q = np.array([3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2])
-    f_q = np.array([3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2])
-    # f_q = np.array([8, 9, 6, 2, 3, 4, 1, 2, 3, 4, 1, 2])
+    f_q = np.array([3, 4, 1, 2, 3, 4, 1, 2])
     f_q = f_q.reshape(f_q.size, 1).transpose()
     expected_payoff_matrix = []
     v_list = []
     for p0 in [1, 0]:
         for p1 in [1, 0]:
-            for p2 in [1, 0]:
-                expected_payoff_matrix.append([])
-                for q0 in [1, 0]:
-                    for q1 in [1, 0]:
-                        for q2 in [1, 0]:
-                            pl = [p0, p1, p2]
-                            ql = [q0, q1, q2]
-                            v, r_p, r_q = calc_expected_payoff(qmatrix, pl, ql, f_p, f_q)
-                            print(pl, ql, sum(v[0:4]), sum(v[4:8]), sum(v[8:12]))
-                            v_list.append(sum(v[0:4])[0])
-                            # expected_payoff_matrix[-1].append((np.round(r_p, 3), np.round(r_q, 3)))
-                            expected_payoff_matrix[-1].append((r_p, r_q))
+            expected_payoff_matrix.append([])
+            for q0 in [1, 0]:
+                for q1 in [1, 0]:
+                    pl = [p0, p1]
+                    ql = [q0, q1]
+                    v, r_p, r_q = calc_expected_payoff(qmatrix, pl, ql, f_p, f_q)
+                    print(sum(v[0:4]))
+                    v_list.append(sum(v[0:4])[0])
+                    expected_payoff_matrix[-1].append((np.round(r_p, 3), np.round(r_q, 3)))
     print(expected_payoff_matrix)
     print(v_list)
     expected_payoff_matrix_pd = pd.DataFrame(expected_payoff_matrix)
@@ -250,10 +239,9 @@ def run_payoff_matrix_task():
     expected_payoff_matrix_pd.to_csv(file_name, index=None)
 
     k_list = []
-    for i in range(1, 8):
-        k_list.append((expected_payoff_matrix[0][i][1] - expected_payoff_matrix[0][0][1]) / (v_list[i] - v_list[0]))
+    for i in range(1, 4):
+        k_list.append((expected_payoff_matrix[0][i][1] - expected_payoff_matrix[0][0][1]) / (v_list[0] - v_list[i]))
     print(k_list)
-
 
 if __name__ == '__main__':
     # s_init_list = read_s_init()
