@@ -75,7 +75,7 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
 
 
 def run_task_rd(s_init):
-    t = np.arange(0, int(10e5))
+    t = np.arange(0, int(2 * 10e5))
     step_size = 0.001
     s_n = 2
     print(s_init)
@@ -140,13 +140,13 @@ def run_task_rd(s_init):
             dq1_c_d = ((r_q_1_cc * p1 + r_q_1_dc * (1 - p1)) - (r_q_1_cd * p1 + r_q_1_dd * (1 - p1)))
             vq1_c_d = ((v_q_1_cc * p1 + v_q_1_dc * (1 - p1)) - (v_q_1_cd * p1 + v_q_1_dd * (1 - p1)))
             if dp0_c_d < 0 and vp0_c_d > 0:
-                k_p_0 = (-1 * dp0_c_d) / vp0_c_d + 0.1
+                k_p_0 = (-1 * dp0_c_d) / vp0_c_d + 0.01
             if dq0_c_d < 0 and vq0_c_d > 0:
-                k_q_0 = (-1 * dq0_c_d) / vq0_c_d + 0.1
+                k_q_0 = (-1 * dq0_c_d) / vq0_c_d + 0.01
             if dp1_c_d < 0 and vp1_c_d > 0:
-                k_p_1 = (-1 * dp1_c_d) / vp1_c_d + 0.1
+                k_p_1 = (-1 * dp1_c_d) / vp1_c_d + 0.01
             if dq1_c_d < 0 and vq1_c_d > 0:
-                k_q_1 = (-1 * dq1_c_d) / vq1_c_d + 0.1
+                k_q_1 = (-1 * dq1_c_d) / vq1_c_d + 0.01
             k = max(k_p_0, k_q_0, k_p_1, k_q_1)
             dp0 = (dp0_c_d + k * vp0_c_d) * p0 * (1 - p0) * v_0
             dq0 = (dq0_c_d + k * vq0_c_d) * q0 * (1 - q0) * v_0
@@ -166,10 +166,9 @@ def run_task_rd(s_init):
         file_name_st = abs_path + csv_file_name_st
         file_name_k = abs_path + csv_file_name_k
         d_pd = pd.DataFrame(d)
-        k_pd = pd.DataFrame(k)
+        k_pd = pd.DataFrame(k_list)
         d_pd.to_csv(file_name_st, index=None)
         k_pd.to_csv(file_name_k, index=None)
-
 
 def read_s_init():
     abs_path = os.getcwd()
