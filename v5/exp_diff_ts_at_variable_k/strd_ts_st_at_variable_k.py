@@ -75,8 +75,8 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
 
 
 def run_task_rd(s_init):
-    t = np.arange(0, int(2 * 10e5))
-    step_size = 0.001
+    t = np.arange(0, int(10e5))
+    step_size = 0.01
     s_n = 2
     print(s_init)
     for z_1, z_2 in [[0.9, 0.1]]:
@@ -139,15 +139,15 @@ def run_task_rd(s_init):
             vp1_c_d = ((v_p_1_cc * q1 + v_p_1_cd * (1 - q1)) - (v_p_1_dc * q1 + v_p_1_dd * (1 - q1)))
             dq1_c_d = ((r_q_1_cc * p1 + r_q_1_dc * (1 - p1)) - (r_q_1_cd * p1 + r_q_1_dd * (1 - p1)))
             vq1_c_d = ((v_q_1_cc * p1 + v_q_1_dc * (1 - p1)) - (v_q_1_cd * p1 + v_q_1_dd * (1 - p1)))
-            if dp0_c_d < 0 and vp0_c_d > 0:
+            if dp0_c_d <= 0 < vp0_c_d:
                 k_p_0 = (-1 * dp0_c_d) / vp0_c_d + 0.01
-            if dq0_c_d < 0 and vq0_c_d > 0:
+            if dq0_c_d <= 0 < vq0_c_d:
                 k_q_0 = (-1 * dq0_c_d) / vq0_c_d + 0.01
-            if dp1_c_d < 0 and vp1_c_d > 0:
+            if dp1_c_d <= 0 < vp1_c_d:
                 k_p_1 = (-1 * dp1_c_d) / vp1_c_d + 0.01
-            if dq1_c_d < 0 and vq1_c_d > 0:
+            if dq1_c_d <= 0 < vq1_c_d:
                 k_q_1 = (-1 * dq1_c_d) / vq1_c_d + 0.01
-            k = max(k_p_0, k_q_0, k_p_1, k_q_1)
+            k = max(k_p_0, k_q_0, k_p_1, k_q_1, 0)
             dp0 = (dp0_c_d + k * vp0_c_d) * p0 * (1 - p0) * v_0
             dq0 = (dq0_c_d + k * vq0_c_d) * q0 * (1 - q0) * v_0
             dp1 = (dp1_c_d + k * vp1_c_d) * p1 * (1 - p1) * v_1

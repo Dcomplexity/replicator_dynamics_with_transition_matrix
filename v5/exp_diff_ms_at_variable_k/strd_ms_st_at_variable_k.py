@@ -76,7 +76,7 @@ def calc_payoff(agent_id, s, a_p, a_q, qvec, pl, ql, f_p, f_q):
 
 def run_task_rd(s_init):
     t = np.arange(0, int(2 * 10e5))
-    step_size = 0.001
+    step_size = 0.01
     s_n = 3
     print(s_init)
     for z_1, z_2 in [[0.9, 0.1]]:
@@ -108,7 +108,7 @@ def run_task_rd(s_init):
         f_q = f_q.reshape(f_q.size, 1).transpose()
         d = []
         d.append([p0, q0, p1, q1, p2, q2])
-        k_list = [0]
+        k_list = []
         for _ in t:
             # print('strd', _)
             if _ % 1000 == 0:
@@ -143,7 +143,6 @@ def run_task_rd(s_init):
             v_0 = np.sum(v[0:4])
             v_1 = np.sum(v[4:8])
             v_2 = np.sum(v[8:12])
-            k = 0
             k_p_0 = 0
             k_q_0 = 0
             k_p_1 = 0
@@ -162,19 +161,19 @@ def run_task_rd(s_init):
             vp2_c_d = ((v_p_2_cc * q2 + v_p_2_cd * (1 - q2)) - (v_p_2_dc * q2 + v_p_2_dd * (1 - q2)))
             dq2_c_d = ((r_q_2_cc * p2 + r_q_2_dc * (1 - p2)) - (v_q_2_cd * p2 + v_q_2_dd * (1 - p2)))
             vq2_c_d = ((v_q_2_cc * p2 + v_q_2_dc * (1 - p2)) - (v_q_2_cd * p2 + v_q_2_dd * (1 - p2)))
-            if dp0_c_d < 0 and vp0_c_d > 0:
+            if dp0_c_d <= 0 < vp0_c_d:
                 k_p_0 = (-1 * dp0_c_d) / vp0_c_d + 0.01
-            if dq0_c_d < 0 and vq0_c_d > 0:
+            if dq0_c_d <= 0 < vq0_c_d:
                 k_q_0 = (-1 * dq0_c_d) / vq0_c_d + 0.01
-            if dp1_c_d < 0 and vp1_c_d > 0:
+            if dp1_c_d <= 0 < vp1_c_d:
                 k_p_1 = (-1 * dp1_c_d) / vp1_c_d + 0.01
-            if dq1_c_d < 0 and vq1_c_d > 0:
+            if dq1_c_d <= 0 < vq1_c_d:
                 k_q_1 = (-1 * dq1_c_d) / vq1_c_d + 0.01
-            if dp2_c_d < 0 and vp2_c_d > 0:
+            if dp2_c_d <= 0 < vp2_c_d:
                 k_p_2 = (-1 * dp2_c_d) / vp2_c_d + 0.01
-            if dq2_c_d < 0 and vq2_c_d > 0:
+            if dq2_c_d <= 0 < vq2_c_d:
                 k_q_2 = (-1 * dq2_c_d) / vq2_c_d + 0.01
-            k = max(k_p_0, k_q_0, k_p_1, k_q_1, k_p_2, k_q_2)
+            k = max(k_p_0, k_q_0, k_p_2, k_q_2, k_p_1, k_q_1, 0)
             dp0 = (dp0_c_d + k * vp0_c_d) * p0 * (1 - p0) * v_0
             dq0 = (dq0_c_d + k * vq0_c_d) * q0 * (1 - q0) * v_0
             dp1 = (dp1_c_d + k * vp1_c_d) * p1 * (1 - p1) * v_1
